@@ -1,6 +1,8 @@
 package nlu.dacn.dacn_backend.controller;
 
 import lombok.RequiredArgsConstructor;
+import nlu.dacn.dacn_backend.entity.Laptop;
+import nlu.dacn.dacn_backend.model.request.LaptopFilter;
 import nlu.dacn.dacn_backend.model.response.LaptopOutput;
 import nlu.dacn.dacn_backend.service.impl.LaptopService;
 import org.springframework.data.domain.Page;
@@ -24,7 +26,17 @@ public class LaptopController {
                                   @RequestParam(value = "types", required = false) String typeJson,
                                   @RequestParam(value = "brands", required = false) String brandJson,
                                   @RequestParam(value = "chipCpus", required = false) String chipCpuJson) {
+        List<String> types = typeJson != null && typeJson.length() > 0 ? List.of(  typeJson.split(",")) : new ArrayList<>() ;
+        List<String> brands =  brandJson != null && brandJson.length() > 0 ? List.of(  brandJson.split(",")) : new ArrayList<>();
+        List<String> chipCpus =  chipCpuJson != null && chipCpuJson.length() > 0 ? List.of(  chipCpuJson.split(",")) : new ArrayList<>();
 
-        return null;
+        LaptopFilter filter = new LaptopFilter(types, brands, chipCpus);
+
+        Page<Laptop> laptopPage = laptopService.getAllLaptop(filter, start, limit);
+        LaptopOutput output = new LaptopOutput();
+        output.setTotalPage(laptopPage.getTotalPages());
+        output.setPage(laptopPage.getNumber() + 1);
+        output.setLaptopList(laptopPage.getContent());
+        return output;
     }
 }
