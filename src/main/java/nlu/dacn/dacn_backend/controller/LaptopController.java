@@ -1,15 +1,13 @@
 package nlu.dacn.dacn_backend.controller;
 
 import lombok.RequiredArgsConstructor;
+import nlu.dacn.dacn_backend.dto.LaptopDTO;
 import nlu.dacn.dacn_backend.entity.Laptop;
 import nlu.dacn.dacn_backend.model.request.LaptopFilter;
 import nlu.dacn.dacn_backend.model.response.LaptopOutput;
 import nlu.dacn.dacn_backend.service.impl.LaptopService;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,5 +36,10 @@ public class LaptopController {
         output.setPage(laptopPage.getNumber() + 1);
         output.setLaptopList(laptopPage.getContent());
         return output;
+    }
+
+    @GetMapping("/laptop/{id}")
+    public LaptopDTO getLaptop(@PathVariable("id") Long id) {
+        return laptopService.findLaptopById(id);
     }
 }
