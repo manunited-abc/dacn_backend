@@ -1,7 +1,7 @@
 package nlu.dacn.dacn_backend.controller;
 
 import lombok.RequiredArgsConstructor;
-import nlu.dacn.dacn_backend.dto.LaptopDTO;
+import nlu.dacn.dacn_backend.dto.request.LaptopDTO;
 import nlu.dacn.dacn_backend.entity.Laptop;
 import nlu.dacn.dacn_backend.model.request.LaptopFilter;
 import nlu.dacn.dacn_backend.model.response.LaptopOutput;

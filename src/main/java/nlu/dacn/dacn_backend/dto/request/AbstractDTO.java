@@ -1,4 +1,4 @@
-package nlu.dacn.dacn_backend.dto;
+package nlu.dacn.dacn_backend.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
