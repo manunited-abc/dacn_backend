@@ -2,7 +2,7 @@ package nlu.dacn.dacn_backend.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import nlu.dacn.dacn_backend.converter.LaptopConverter;
-import nlu.dacn.dacn_backend.dto.LaptopDTO;
+import nlu.dacn.dacn_backend.dto.request.LaptopDTO;
 import nlu.dacn.dacn_backend.entity.Laptop;
 import nlu.dacn.dacn_backend.exception.ServiceException;
 import nlu.dacn.dacn_backend.model.request.LaptopFilter;

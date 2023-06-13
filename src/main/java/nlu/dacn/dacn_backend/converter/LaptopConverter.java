@@ -1,6 +1,6 @@
 package nlu.dacn.dacn_backend.converter;
 
-import nlu.dacn.dacn_backend.dto.LaptopDTO;
+import nlu.dacn.dacn_backend.dto.request.LaptopDTO;
 import nlu.dacn.dacn_backend.entity.Laptop;
 import org.springframework.stereotype.Component;
 
