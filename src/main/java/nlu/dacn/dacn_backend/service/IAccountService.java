@@ -9,4 +9,8 @@ import java.util.Optional;
 @Service
 public interface IAccountService {
     JwtResponse login(String username, String password);
+
+    void sendCodeToEmail(String host, String token);
+
+    void processResetPassword(String token, String password);
 }
