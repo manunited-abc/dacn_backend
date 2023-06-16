@@ -1,9 +1,14 @@
 package nlu.dacn.dacn_backend.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import nlu.dacn.dacn_backend.converter.AccountConverter;
+import nlu.dacn.dacn_backend.dto.request.AccountDTO;
 import nlu.dacn.dacn_backend.dto.response.JwtResponse;
 import nlu.dacn.dacn_backend.entity.Account;
+import nlu.dacn.dacn_backend.entity.Role;
+import nlu.dacn.dacn_backend.enumv1.RoleType;
 import nlu.dacn.dacn_backend.enumv1.State;
+import nlu.dacn.dacn_backend.evenlistener.AccountCreatedEvent;
 import nlu.dacn.dacn_backend.exception.ServiceException;
 import nlu.dacn.dacn_backend.mail.GMailer;
 import nlu.dacn.dacn_backend.repository.AccountRepository;
@@ -11,6 +16,7 @@ import nlu.dacn.dacn_backend.security.jwt.JwtTokenProvider;
 import nlu.dacn.dacn_backend.security.useprincal.UserPrinciple;
 import nlu.dacn.dacn_backend.service.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,9 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -33,6 +37,13 @@ public class AccountService implements IAccountService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final Map<String, String> tokenLoginMap = new HashMap<>();
+
+ 
+
+
+    private final RoleService roleService;
+    private final ApplicationContext applicationContext;
+    private final AccountConverter accountConverter;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -76,6 +87,7 @@ public class AccountService implements IAccountService {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Tài khoản đã bị xóa");
         }
     }
+
     @Override
     public void sendCodeToEmail(String host, String username) {
         Optional<Account> accountOptional = accountRepository.findByUserName(username.trim());
@@ -114,4 +126,57 @@ public class AccountService implements IAccountService {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Token không hợp lệ hoặc đã hết hiệu lực");
         }
     }
+
+    //   Thêm mới hoặc cập nhật tài khoản
+    @Override
+    public AccountDTO addAccount(AccountDTO dto) {
+        Account account;
+        if (dto.getRoles() == null) {
+            dto.setRoles(new ArrayList<>());
+        }
+        if (dto.getState() == null) {
+            dto.setState(State.ACTIVE);
+        }
+        if (accountRepository.findByUserName(dto.getUserName().trim()).isPresent()) {
+            throw new ServiceException(HttpStatus.FOUND, "Tên tài khoản đã tồn tại");
+        }
+        if (findByEmail(dto.getEmail().trim()).isPresent()) {
+            throw new ServiceException(HttpStatus.FOUND, "Email đã tồn tại");
+        }
+        List<Role> roles = new ArrayList<>();
+        List<Role> roleList = dto.getRoles();
+        if (roleList.size() > 0) {
+            roleList.forEach(role -> {
+                if ("ADMIN".equals(role.getCode())) {
+                    Role adminRole = roleService.findByCode(RoleType.ADMIN.getCode()).orElseThrow(
+                            () -> new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy quyền " + RoleType.ADMIN.getCode())
+                    );
+                    roles.add(adminRole);
+                } else {
+                    Role userRole = roleService.findByCode(RoleType.USER.getCode()).orElseThrow(
+                            () -> new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy quyền " + RoleType.USER.getCode())
+                    );
+                    roles.add(userRole);
+                }
+            });
+        } else {
+            Role userRole = roleService.findByCode(RoleType.USER.getCode()).orElseThrow(
+                    () -> new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy quyền " + RoleType.USER.getCode())
+            );
+            roles.add(userRole);
+        }
+
+        dto.setRoles(roles);
+        account = accountConverter.toAccount(dto);
+        account.setPassword(passwordEncoder.encode(account.getPassword()));
+        account = accountRepository.save(account);
+        applicationContext.publishEvent(new AccountCreatedEvent(account));
+        return accountConverter.toAccountDTO(account);
+    }
+    @Override
+    public Optional<Account> findByEmail(String email) {
+        return accountRepository.findByEmail(email);
+    }
+
+
 }
