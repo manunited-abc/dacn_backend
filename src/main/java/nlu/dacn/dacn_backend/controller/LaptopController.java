@@ -2,6 +2,7 @@ package nlu.dacn.dacn_backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import nlu.dacn.dacn_backend.dto.request.LaptopDTO;
+import nlu.dacn.dacn_backend.dto.response.ImageModel;
 import nlu.dacn.dacn_backend.entity.Laptop;
 import nlu.dacn.dacn_backend.model.request.LaptopFilter;
 import nlu.dacn.dacn_backend.model.response.LaptopOutput;
@@ -43,4 +44,9 @@ public class LaptopController {
     public LaptopDTO getLaptop(@PathVariable("id") Long id) {
         return laptopService.findLaptopById(id);
     }
+    @GetMapping("/laptop/images/{id}")
+    public List<ImageModel> getImageLinks(@PathVariable("id") Long id) {
+        return laptopService.getImageLinks(id);
+    }
+
 }
