@@ -18,6 +18,7 @@ import java.util.List;
 public class LaptopController {
     private final LaptopService laptopService;
 
+    // start must be natural number. (1,2,3...)
     @GetMapping("/laptop")
     public LaptopOutput getLaptop(@RequestParam("start") int start,
                                   @RequestParam("limit") int limit,
