@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "a0ec38d5-2614-43d0-a2c9-2324a4bd5608",
+		"_postman_id": "c46b801a-0bdd-43a4-a6af-469ad5f30671",
 		"name": "DACN thầy dũ",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "17354908",
-		"_collection_link": "https://javascriptf8.postman.co/workspace/MockAPI~34b679d1-1e1a-42b3-9016-a02682fc7f82/collection/17354908-a0ec38d5-2614-43d0-a2c9-2324a4bd5608?action=share&creator=17354908&source=collection_link"
+		"_exporter_id": "24299849",
+		"_collection_link": "https://cdw-api-120319.postman.co/workspace/CDW-ecomerce-gadget-2023~fda120dd-2adf-4eb6-9f94-16ded7249ca2/collection/24299849-c46b801a-0bdd-43a4-a6af-469ad5f30671?action=share&creator=24299849&source=collection_link"
 	},
 	"item": [
 		{
@@ -25,6 +25,47 @@
 							"path": [
 								"laptop",
 								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list and paging request",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"types\":[\"Gaming\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/laptop?start=1&limit=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"laptop"
+							],
+							"query": [
+								{
+									"key": "start",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
 							]
 						}
 					},
@@ -71,7 +112,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"userName\": \"nkh\",\r\n    \"password\":\"123456\",\r\n    \"fullName\":\"Leo Messi\",\r\n    \"phone\":\"043343243242\",\r\n    \"email\":\"kh@gmail.com\"\r\n}",
+							"raw": "{\r\n    \"userName\": \"nkh3\",\r\n    \"password\":\"123456\",\r\n    \"fullName\":\"Leo Messi\",\r\n    \"phone\":\"043343243242\",\r\n    \"email\":\"thuanworkspace@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -90,6 +131,44 @@
 								"register"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "forgot password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8085/account/changePassword?host=b&username=nkh2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"account",
+								"changePassword"
+							],
+							"query": [
+								{
+									"key": "host",
+									"value": "b"
+								},
+								{
+									"key": "username",
+									"value": "nkh2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "authenticateForgotPassword",
+					"request": {
+						"method": "GET",
+						"header": []
 					},
 					"response": []
 				}
