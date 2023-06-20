@@ -35,6 +35,16 @@ import java.util.List;
 public class AccountController {
     private final AccountService accountService;
 
+    @PutMapping("/account/update")
+    public AccountDTO updateAccount(@RequestBody AccountDTO accountDTO, @RequestParam("token") String token) {
+        return accountService.update(accountDTO, token);
+    }
+
+    @PutMapping("/account/admin/update")
+    public ResponseEntity<?> updateAccountByAdmin(@RequestBody AccountDTO accountDTO, @RequestParam("token") String token) {
+        accountService.updateAccountByAdmin(accountDTO, token);
+        return new ResponseEntity<>(new ResponMessenger("Cập nhật tài khoản thành công"), HttpStatus.OK);
+    }
 
     @PostMapping("/account/changePassword")
     public ResponseEntity<?> changePassword(@RequestParam String host, @RequestParam String username) {
