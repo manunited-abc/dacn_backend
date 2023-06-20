@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "c46b801a-0bdd-43a4-a6af-469ad5f30671",
+		"_postman_id": "c2e3a311-3f3a-4329-bbd4-cc694789e10c",
 		"name": "DACN thầy dũ",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "24299849",
-		"_collection_link": "https://cdw-api-120319.postman.co/workspace/CDW-ecomerce-gadget-2023~fda120dd-2adf-4eb6-9f94-16ded7249ca2/collection/24299849-c46b801a-0bdd-43a4-a6af-469ad5f30671?action=share&creator=24299849&source=collection_link"
+		"_exporter_id": "27194540"
 	},
 	"item": [
 		{
@@ -106,6 +105,35 @@
 					"response": []
 				},
 				{
+					"name": "Login register account",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" :\"nkh3\",\n    \"password\" :\"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Register",
 					"request": {
 						"method": "POST",
@@ -168,7 +196,86 @@
 					"name": "authenticateForgotPassword",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "update account by token",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" :\"nkh3\",\n    \"password\" :\"1234567\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/account/update?token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJua2gzIiwiaWF0IjoxNjg3Mjc0MjA5LCJleHAiOjE2ODczNjA2MDl9.D93CXEj2MaG9VFKt9JaJ6H1gAdOJ4VdUD-f86AEXyvzt8Upp6Ngs2CJa2jL24A7KnuIWGFY6N02R6X-JVSkfgA",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"account",
+								"update"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJua2gzIiwiaWF0IjoxNjg3Mjc0MjA5LCJleHAiOjE2ODczNjA2MDl9.D93CXEj2MaG9VFKt9JaJ6H1gAdOJ4VdUD-f86AEXyvzt8Upp6Ngs2CJa2jL24A7KnuIWGFY6N02R6X-JVSkfgA"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update account by admin token",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\":2,\n    \"userName\":\"nkh3\",\n    \"password\" :\"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/account/admin/update?token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NzI3NDI0MywiZXhwIjoxNjg3MzYwNjQzfQ.aaWZBs_y0BEge5hiAw8NzTGeFK1crpZa14kH7VA77aY_qJcHUu_l4QMVFFN5GB6mchWgQo7tqfZvAYB93sCFZA",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"account",
+								"admin",
+								"update"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NzI3NDI0MywiZXhwIjoxNjg3MzYwNjQzfQ.aaWZBs_y0BEge5hiAw8NzTGeFK1crpZa14kH7VA77aY_qJcHUu_l4QMVFFN5GB6mchWgQo7tqfZvAYB93sCFZA"
+								}
+							]
+						}
 					},
 					"response": []
 				}

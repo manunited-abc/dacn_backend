@@ -178,5 +178,61 @@ public class AccountService implements IAccountService {
         return accountRepository.findByEmail(email);
     }
 
+    @Override
+    public AccountDTO update(AccountDTO dto, String token) {
+        Account account;
+        String username = jwtTokenProvider.getUserNameFromToken(token.trim());
+        Optional<Account> optionalAccount = accountRepository.findByUserName(username);
+        if (!optionalAccount.isPresent()) {
+            throw new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy thông tin tài khoản: " + username);
+        }
+        Account oldAccount = optionalAccount.get();
+        account = accountConverter.toAccount(dto, oldAccount);
+        if (dto.getPassword() != null) {
+            account.setPassword(passwordEncoder.encode(account.getPassword()));
+        }
+        accountRepository.save(account);
+        return accountConverter.toAccountDTO(account);
+    }
+
+    @Override
+    public void updateAccountByAdmin(AccountDTO dto, String token) {
+        Account admin;
+        String username = jwtTokenProvider.getUserNameFromToken(token.trim());
+        Optional<Account> optionalAccount = accountRepository.findByUserName(username);
+        if (!optionalAccount.isPresent()) {
+            throw new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy thông tin tài khoản: " + username);
+        }
+
+        admin = optionalAccount.get();
+        RoleType adminRole = RoleType.ADMIN;
+        boolean isAdmin = false;
+        for (Role role : admin.getRoles()) {
+            if (role.getCode().equals(adminRole.getCode())) {
+                isAdmin = true;
+                break;
+            }
+        }
+        if (isAdmin) {
+            if (dto.getId() != null) {
+                Optional<Account> optionalAccount1 = accountRepository.findById(dto.getId());
+                if (optionalAccount1.isPresent()) {
+                    Account oldAccount = optionalAccount1.get();
+                    Account accountUpdate = accountConverter.toAccount(dto, oldAccount);
+                    if (dto.getPassword() != null) {
+                        accountUpdate.setPassword(passwordEncoder.encode(accountUpdate.getPassword()));
+                    }
+                    accountRepository.save(accountUpdate);
+                } else {
+                    throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Không tìm thấy tài khoản, vui lòng kiểm tra lại");
+                }
+            } else {
+                throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Không tìm thấy id tài khoản");
+            }
+        } else {
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Bạn không có quyền thay đổi");
+        }
+    }
+
 
 }

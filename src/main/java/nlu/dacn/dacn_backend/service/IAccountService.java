@@ -20,4 +20,7 @@ public interface IAccountService {
     AccountDTO addAccount(AccountDTO dto);
     Optional<Account> findByEmail(String email);
 
+    AccountDTO update(AccountDTO accountDTO, String token);
+
+    void updateAccountByAdmin(AccountDTO accountDTO, String token);
 }
