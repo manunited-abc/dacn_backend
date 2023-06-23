@@ -14,4 +14,5 @@ public interface ILaptopService {
 
     LaptopDTO findLaptopById(Long id);
     List<ImageModel> getImageLinks(Long id);
+    List<LaptopDTO> getLaptopByProductName(String key);
 }

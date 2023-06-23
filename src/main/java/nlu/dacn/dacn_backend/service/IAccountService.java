@@ -1,6 +1,7 @@
 package nlu.dacn.dacn_backend.service;
 
 import nlu.dacn.dacn_backend.dto.request.AccountDTO;
+import nlu.dacn.dacn_backend.dto.request.LaptopDTO;
 import nlu.dacn.dacn_backend.dto.response.JwtResponse;
 import nlu.dacn.dacn_backend.entity.Account;
 import org.springframework.stereotype.Service;
@@ -23,4 +24,5 @@ public interface IAccountService {
     AccountDTO update(AccountDTO accountDTO, String token);
 
     void updateAccountByAdmin(AccountDTO accountDTO, String token);
+
 }

@@ -48,5 +48,9 @@ public class LaptopController {
     public List<ImageModel> getImageLinks(@PathVariable("id") Long id) {
         return laptopService.getImageLinks(id);
     }
+    @GetMapping("/laptop/product_name")
+    public List<LaptopDTO> searchLaptopByProductName(@RequestParam("productName") String productName) {
+        return laptopService.getLaptopByProductName(productName);
+    }
 
 }
