@@ -234,5 +234,16 @@ public class AccountService implements IAccountService {
         }
     }
 
+    @Override
+    public Optional<Account> findByUserName(String token) {
+        String username = jwtTokenProvider.getUserNameFromToken(token.trim());
+        Optional<Account> optionalAccount = accountRepository.findByUserName(username);
+        if (optionalAccount.isPresent()) {
+            return optionalAccount;
+        } else {
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Tài khoản không tồn tại, vui lòng thử lại");
+        }
+    }
+
 
 }
