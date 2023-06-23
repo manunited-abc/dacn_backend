@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "0b6c44fb-6d0f-48af-8780-1e3994b9e76b",
+		"_postman_id": "c2e3a311-3f3a-4329-bbd4-cc694789e10c",
 		"name": "DACN thầy dũ",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "25191182",
-		"_collection_link": "https://winter-station-731942.postman.co/workspace/My-Workspace~3911aeb2-d802-4c35-8886-e850397ed4f9/collection/25191182-0b6c44fb-6d0f-48af-8780-1e3994b9e76b?action=share&creator=25191182&source=collection_link"
+		"_exporter_id": "27194540"
 	},
 	"item": [
 		{
@@ -65,6 +64,32 @@
 								{
 									"key": "limit",
 									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8085/laptop/product_name?productName=laptop",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"laptop",
+								"product_name"
+							],
+							"query": [
+								{
+									"key": "productName",
+									"value": "laptop"
 								}
 							]
 						}
