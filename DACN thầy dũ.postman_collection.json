@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "c2e3a311-3f3a-4329-bbd4-cc694789e10c",
+		"_postman_id": "0b6c44fb-6d0f-48af-8780-1e3994b9e76b",
 		"name": "DACN thầy dũ",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "27194540"
+		"_exporter_id": "25191182",
+		"_collection_link": "https://winter-station-731942.postman.co/workspace/My-Workspace~3911aeb2-d802-4c35-8886-e850397ed4f9/collection/25191182-0b6c44fb-6d0f-48af-8780-1e3994b9e76b?action=share&creator=25191182&source=collection_link"
 	},
 	"item": [
 		{
@@ -273,6 +274,164 @@
 								{
 									"key": "token",
 									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NzI3NDI0MywiZXhwIjoxNjg3MzYwNjQzfQ.aaWZBs_y0BEge5hiAw8NzTGeFK1crpZa14kH7VA77aY_qJcHUu_l4QMVFFN5GB6mchWgQo7tqfZvAYB93sCFZA"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Xóa laptop ra khỏi cart Copy",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\":\"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NzUzMDYxNSwiZXhwIjoxNjg3NjE3MDE1fQ.4wfR5-8SXLWCU_iBPDZ2HGJQX1bChEOg8lTg5gTGmZTNJvZtlDNAsFJQAd9OJoSsS76MOinu-OYh62eohu8Tkg\",\r\n    \"ids\":[\r\n        \"2\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/cart/laptop/remove",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"cart",
+								"laptop",
+								"remove"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Giảm số lượng 1 Laptop trong cart Copy",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\":\"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NzUzMDYxNSwiZXhwIjoxNjg3NjE3MDE1fQ.4wfR5-8SXLWCU_iBPDZ2HGJQX1bChEOg8lTg5gTGmZTNJvZtlDNAsFJQAd9OJoSsS76MOinu-OYh62eohu8Tkg\",\r\n    \"ids\":[\r\n        \"2\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/cart/laptop/reduce",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"cart",
+								"laptop",
+								"reduce"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lấy thông tin giỏ hàng Copy",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/cart/laptops?token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NzUyOTg2MywiZXhwIjoxNjg3NjE2MjYzfQ.ttUoLESYutERVT3PGkyGjZ4525_XlTgXFgAViSWQeBSluAISOssiPU5nojRSydk5urFTc_O3scLYxbTJ7BAKeQ",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"cart",
+								"laptops"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NzUyOTg2MywiZXhwIjoxNjg3NjE2MjYzfQ.ttUoLESYutERVT3PGkyGjZ4525_XlTgXFgAViSWQeBSluAISOssiPU5nojRSydk5urFTc_O3scLYxbTJ7BAKeQ"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Thêm laptop vào giỏ hàng Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MDEiLCJpYXQiOjE2ODE3NDgzNzcsImV4cCI6MTY4MTgzNDc3N30.SnpREPVKvDwAzrXjVIkZxzT_HMPoR25v2qcbd0Pz0sPoLTbng07FvJg9X5L7FjqEcfDtsi7Xh4_kich6AkH75w",
+								"type": "text"
+							},
+							{
+								"key": "laptopId",
+								"value": "123",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\":\"sss\",\r\n    \"laptopId\":\"aaa\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/cart/laptop/add?token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MDEiLCJpYXQiOjE2ODM3Mjg0NzQsImV4cCI6MTY4MzgxNDg3NH0.ffFZre6Ci_KQqZoh_fEO4igEHGo8jv8AL1CpIbbXymg65SkWbIcD_M1cxgfXOmeerho2jVTqkzq61RnXA9giCQ&laptopId=2&quantity=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"cart",
+								"laptop",
+								"add"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MDEiLCJpYXQiOjE2ODM3Mjg0NzQsImV4cCI6MTY4MzgxNDg3NH0.ffFZre6Ci_KQqZoh_fEO4igEHGo8jv8AL1CpIbbXymg65SkWbIcD_M1cxgfXOmeerho2jVTqkzq61RnXA9giCQ"
+								},
+								{
+									"key": "laptopId",
+									"value": "2"
+								},
+								{
+									"key": "quantity",
+									"value": "5"
 								}
 							]
 						}
