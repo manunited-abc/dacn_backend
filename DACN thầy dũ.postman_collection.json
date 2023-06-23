@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "c2e3a311-3f3a-4329-bbd4-cc694789e10c",
+		"_postman_id": "3e39cc25-e93e-4a9c-800b-bd541d200948",
 		"name": "DACN thầy dũ",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "27194540"
+		"_exporter_id": "21771421"
 	},
 	"item": [
 		{
@@ -299,6 +299,32 @@
 								{
 									"key": "token",
 									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NzI3NDI0MywiZXhwIjoxNjg3MzYwNjQzfQ.aaWZBs_y0BEge5hiAw8NzTGeFK1crpZa14kH7VA77aY_qJcHUu_l4QMVFFN5GB6mchWgQo7tqfZvAYB93sCFZA"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get detail by token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8085/account/detail?token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NzUzMzQ2MCwiZXhwIjoxNjg3NjE5ODYwfQ.2n7xyXqZiN3GZ5wp8bo2ss2bimPUZd5MwE_LsZUHTlN9VC1pBryyg0T9qeBAr3G1fo2u8NTjFY-w9n32ISNY_g",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"account",
+								"detail"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NzUzMzQ2MCwiZXhwIjoxNjg3NjE5ODYwfQ.2n7xyXqZiN3GZ5wp8bo2ss2bimPUZd5MwE_LsZUHTlN9VC1pBryyg0T9qeBAr3G1fo2u8NTjFY-w9n32ISNY_g"
 								}
 							]
 						}
