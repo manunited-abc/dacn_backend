@@ -3,6 +3,7 @@ package nlu.dacn.dacn_backend.controller;
 import lombok.RequiredArgsConstructor;
 
 import nlu.dacn.dacn_backend.dto.response.ResponMessenger;
+import nlu.dacn.dacn_backend.entity.Account;
 import nlu.dacn.dacn_backend.service.impl.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,5 +68,11 @@ public class AccountController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/account/detail")
+    public Account getAccount(@RequestParam("token") String token) {
+        return accountService.findByUserName(token).get();
+    }
+
 
 }

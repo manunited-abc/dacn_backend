@@ -23,4 +23,6 @@ public interface IAccountService {
     AccountDTO update(AccountDTO accountDTO, String token);
 
     void updateAccountByAdmin(AccountDTO accountDTO, String token);
+
+    Optional<Account> findByUserName(String username);
 }
