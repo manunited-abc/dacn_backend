@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "3e39cc25-e93e-4a9c-800b-bd541d200948",
+		"_postman_id": "aad26810-974d-4d04-82e8-4ee09f1ee2b5",
 		"name": "DACN thầy dũ",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "21771421"
+		"_exporter_id": "25191182",
+		"_collection_link": "https://winter-station-731942.postman.co/workspace/My-Workspace~3911aeb2-d802-4c35-8886-e850397ed4f9/collection/25191182-aad26810-974d-4d04-82e8-4ee09f1ee2b5?action=share&creator=25191182&source=collection_link"
 	},
 	"item": [
 		{
@@ -483,6 +484,185 @@
 								{
 									"key": "quantity",
 									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "Thêm đơn đặt hàng mới",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MDEiLCJpYXQiOjE2ODE3NDgzNzcsImV4cCI6MTY4MTgzNDc3N30.SnpREPVKvDwAzrXjVIkZxzT_HMPoR25v2qcbd0Pz0sPoLTbng07FvJg9X5L7FjqEcfDtsi7Xh4_kich6AkH75w",
+								"type": "text"
+							},
+							{
+								"key": "laptopId",
+								"value": "123",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\":\"sss\",\r\n    \"laptopId\":\"aaa\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/order?token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4Nzc1OTEwOSwiZXhwIjoxNjg3ODQ1NTA5fQ.WX-mYxLjlNkQNp6AfhABBaNCc4BQbWw_6B1IK3O7s5idXGuj6BoS7crwJZ7EAVYG83MqV097ZbEiH6ljlGSLrg",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"order"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4Nzc1OTEwOSwiZXhwIjoxNjg3ODQ1NTA5fQ.WX-mYxLjlNkQNp6AfhABBaNCc4BQbWw_6B1IK3O7s5idXGuj6BoS7crwJZ7EAVYG83MqV097ZbEiH6ljlGSLrg"
+								},
+								{
+									"key": "laptopId",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "quantity",
+									"value": "5",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Chi tiết 1 đơn đặt hàng",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/order/detail?token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4Nzc1OTEwOSwiZXhwIjoxNjg3ODQ1NTA5fQ.WX-mYxLjlNkQNp6AfhABBaNCc4BQbWw_6B1IK3O7s5idXGuj6BoS7crwJZ7EAVYG83MqV097ZbEiH6ljlGSLrg",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"order",
+								"detail"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4Nzc1OTEwOSwiZXhwIjoxNjg3ODQ1NTA5fQ.WX-mYxLjlNkQNp6AfhABBaNCc4BQbWw_6B1IK3O7s5idXGuj6BoS7crwJZ7EAVYG83MqV097ZbEiH6ljlGSLrg"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Danh sách đơn các đơn đặt hàng",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/order/list?token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4Nzc1OTEwOSwiZXhwIjoxNjg3ODQ1NTA5fQ.WX-mYxLjlNkQNp6AfhABBaNCc4BQbWw_6B1IK3O7s5idXGuj6BoS7crwJZ7EAVYG83MqV097ZbEiH6ljlGSLrg",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"order",
+								"list"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4Nzc1OTEwOSwiZXhwIjoxNjg3ODQ1NTA5fQ.WX-mYxLjlNkQNp6AfhABBaNCc4BQbWw_6B1IK3O7s5idXGuj6BoS7crwJZ7EAVYG83MqV097ZbEiH6ljlGSLrg"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cập nhật trạng thái đơn hàng",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\":\"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4Nzc1OTEwOSwiZXhwIjoxNjg3ODQ1NTA5fQ.WX-mYxLjlNkQNp6AfhABBaNCc4BQbWw_6B1IK3O7s5idXGuj6BoS7crwJZ7EAVYG83MqV097ZbEiH6ljlGSLrg\",\r\n    \"orderId\":\"4\",\r\n    \"orderStatus\": \"PROCESSING\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/order/update?token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4Nzc1OTEwOSwiZXhwIjoxNjg3ODQ1NTA5fQ.WX-mYxLjlNkQNp6AfhABBaNCc4BQbWw_6B1IK3O7s5idXGuj6BoS7crwJZ7EAVYG83MqV097ZbEiH6ljlGSLrg&orderId=4&orderStatus=PROCESSING",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"order",
+								"update"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4Nzc1OTEwOSwiZXhwIjoxNjg3ODQ1NTA5fQ.WX-mYxLjlNkQNp6AfhABBaNCc4BQbWw_6B1IK3O7s5idXGuj6BoS7crwJZ7EAVYG83MqV097ZbEiH6ljlGSLrg"
+								},
+								{
+									"key": "orderId",
+									"value": "4"
+								},
+								{
+									"key": "orderStatus",
+									"value": "PROCESSING"
 								}
 							]
 						}
