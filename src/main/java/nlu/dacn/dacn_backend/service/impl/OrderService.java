@@ -110,6 +110,7 @@ public class OrderService implements IOrderService {
         orderResponse.setOrderDate(order.getCreatedDate());
         orderResponse.setStatus(order.getOrderStatus().getDescription());
         orderResponse.setTotalPayment(order.calculateTotalPrice());
+        orderResponse.setAddressDetail(order.getAccount().getAddressDetail());
 
         LaptopDTO laptopDTO;
         for (Map.Entry<Laptop, Integer> entry : order.getOrderedLaptops().entrySet()) {
