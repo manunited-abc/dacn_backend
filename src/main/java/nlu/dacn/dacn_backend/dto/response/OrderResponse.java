@@ -16,4 +16,5 @@ public class OrderResponse {
     private Date orderDate;
     private List<LaptopDTO> laptopDTOS = new ArrayList<>();
     private double totalPayment = 0;
+    private String addressDetail;
 }
