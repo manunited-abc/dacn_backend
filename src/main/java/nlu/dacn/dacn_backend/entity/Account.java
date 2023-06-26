@@ -60,4 +60,7 @@ public class Account extends BaseEntity {
     @JsonIgnore
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     private Cart cart;
+    @JsonIgnore
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderTest> orderTests;
 }
