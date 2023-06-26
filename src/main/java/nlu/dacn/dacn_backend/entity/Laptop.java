@@ -3,6 +3,7 @@ package nlu.dacn.dacn_backend.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import nlu.dacn.dacn_backend.enumv1.LaptopState;
 
 import javax.persistence.*;
