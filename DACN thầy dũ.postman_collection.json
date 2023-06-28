@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "aad26810-974d-4d04-82e8-4ee09f1ee2b5",
+		"_postman_id": "ed26a7f5-daf4-476e-b000-1c7764d05194",
 		"name": "DACN thầy dũ",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "25191182",
-		"_collection_link": "https://winter-station-731942.postman.co/workspace/My-Workspace~3911aeb2-d802-4c35-8886-e850397ed4f9/collection/25191182-aad26810-974d-4d04-82e8-4ee09f1ee2b5?action=share&creator=25191182&source=collection_link"
+		"_exporter_id": "17354908",
+		"_collection_link": "https://javascriptf8.postman.co/workspace/MockAPI~34b679d1-1e1a-42b3-9016-a02682fc7f82/collection/17354908-ed26a7f5-daf4-476e-b000-1c7764d05194?action=share&creator=17354908&source=collection_link"
 	},
 	"item": [
 		{
@@ -664,6 +664,42 @@
 									"key": "orderStatus",
 									"value": "PROCESSING"
 								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Chatbot",
+			"item": [
+				{
+					"name": "question",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"question\":\"hello\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/chat",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"chat"
 							]
 						}
 					},

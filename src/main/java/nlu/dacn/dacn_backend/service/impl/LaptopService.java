@@ -78,4 +78,17 @@ public class LaptopService implements ILaptopService {
         return laptopRepository.findAllChipCpu();
     }
 
+    @Override
+    public List<LaptopDTO> getLaptopByProductName(String key) {
+        List<LaptopDTO> result = new ArrayList<>();
+        List<Laptop> laptops = laptopRepository.findByProductNameContainingIgnoreCase(key);
+        LaptopDTO laptopDTO;
+        for(Laptop laptop: laptops) {
+            laptopDTO = laptopConverter.toLaptopDTO(laptop);
+            result.add(laptopDTO);
+        }
+        return result;
+    }
+
+
 }

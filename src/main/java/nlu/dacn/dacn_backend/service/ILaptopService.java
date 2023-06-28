@@ -7,6 +7,7 @@ import nlu.dacn.dacn_backend.model.request.LaptopFilter;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ILaptopService {
 
@@ -20,4 +21,5 @@ public interface ILaptopService {
     List<String> getAllType();
 
     List<String> getAllChipCpu();
+    List<LaptopDTO> getLaptopByProductName(String key);
 }

@@ -63,5 +63,8 @@ public class LaptopController {
     public List<String> getAllChipCpu() {
         return laptopService.getAllChipCpu();
     }
-
+    @GetMapping("/laptop/product_name")
+    public List<LaptopDTO> searchLaptopByProductName(@RequestParam("productName") String productName) {
+        return laptopService.getLaptopByProductName(productName);
+    }
 }

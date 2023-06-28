@@ -15,4 +15,5 @@ public interface LaptopRepository extends JpaRepository<Laptop, Long> {
 
     @Query("Select distinct l.chipCpu from Laptop l")
     List<String> findAllChipCpu();
+    List<Laptop> findByProductNameContainingIgnoreCase(String productName);
 }
