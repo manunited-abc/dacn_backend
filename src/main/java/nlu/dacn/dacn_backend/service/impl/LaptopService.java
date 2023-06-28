@@ -41,6 +41,7 @@ public class LaptopService implements ILaptopService {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Không tìm thấy laptop hoặc đã bị xóa");
         }
     }
+
     @Override
     public List<ImageModel> getImageLinks(Long id) {
         Optional<Laptop> laptopOptional = laptopRepository.findById(id);
@@ -60,6 +61,21 @@ public class LaptopService implements ILaptopService {
         } else {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Không tìm thấy laptop");
         }
+    }
+
+    @Override
+    public List<String> getAllBrand() {
+        return laptopRepository.findAllBrand();
+    }
+
+    @Override
+    public List<String> getAllType() {
+        return laptopRepository.findAllType();
+    }
+
+    @Override
+    public List<String> getAllChipCpu() {
+        return laptopRepository.findAllChipCpu();
     }
 
 }

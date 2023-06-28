@@ -14,4 +14,10 @@ public interface ILaptopService {
 
     LaptopDTO findLaptopById(Long id);
     List<ImageModel> getImageLinks(Long id);
+
+    List<String> getAllBrand();
+
+    List<String> getAllType();
+
+    List<String> getAllChipCpu();
 }

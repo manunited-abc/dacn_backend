@@ -49,4 +49,19 @@ public class LaptopController {
         return laptopService.getImageLinks(id);
     }
 
+    @GetMapping("/laptop/brand")
+    public List<String> getAllBrand() {
+        return laptopService.getAllBrand();
+    }
+
+    @GetMapping("/laptop/type")
+    public List<String> getAllType() {
+        return laptopService.getAllType();
+    }
+
+    @GetMapping("/laptop/chipCpu")
+    public List<String> getAllChipCpu() {
+        return laptopService.getAllChipCpu();
+    }
+
 }
