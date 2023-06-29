@@ -1,8 +1,11 @@
 package nlu.dacn.dacn_backend.service.impl;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import lombok.RequiredArgsConstructor;
 import nlu.dacn.dacn_backend.converter.AccountConverter;
 import nlu.dacn.dacn_backend.dto.request.AccountDTO;
+import nlu.dacn.dacn_backend.dto.request.LoginGoogleRequest;
 import nlu.dacn.dacn_backend.dto.response.JwtResponse;
 import nlu.dacn.dacn_backend.entity.Account;
 import nlu.dacn.dacn_backend.entity.Role;
@@ -16,6 +19,7 @@ import nlu.dacn.dacn_backend.security.jwt.JwtTokenProvider;
 import nlu.dacn.dacn_backend.security.useprincal.UserPrinciple;
 import nlu.dacn.dacn_backend.service.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,10 +28,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.*;
 import java.util.stream.Collectors;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 
 @Component
 @RequiredArgsConstructor
@@ -45,6 +56,13 @@ public class AccountService implements IAccountService {
     private final ApplicationContext applicationContext;
     private final AccountConverter accountConverter;
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private OAuth2AuthorizedClientService authorizedClientService;
+
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
+    private String clientId;
+
 
 
     @Override
@@ -173,6 +191,9 @@ public class AccountService implements IAccountService {
         applicationContext.publishEvent(new AccountCreatedEvent(account));
         return accountConverter.toAccountDTO(account);
     }
+
+
+
     @Override
     public Optional<Account> findByEmail(String email) {
         return accountRepository.findByEmail(email);
@@ -243,6 +264,49 @@ public class AccountService implements IAccountService {
         } else {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Tài khoản không tồn tại, vui lòng thử lại");
         }
+    }
+
+    @Override
+    public JwtResponse loginGoogle(LoginGoogleRequest request) {
+        try {
+        HttpTransport transport = new NetHttpTransport();
+        JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+                .setAudience(Collections.singletonList(clientId))
+                .build();
+        // Xác thực tokenId
+        GoogleIdToken idToken = verifier.verify(request.getTokenId());
+        if (idToken != null) {
+            // Xác thực thành công, trả về thông tin người dùng
+            GoogleIdToken.Payload payload = idToken.getPayload();
+
+            String email = payload.getEmail();
+            String name = (String) payload.get("name");
+            System.out.println(name);
+            Account existingUser = findByEmail(email).get();
+
+            if (existingUser != null) {
+                String username = existingUser.getUserName();
+
+                String tokenUser = tokenLoginMap.get(username);
+
+                if (tokenUser == null || !jwtTokenProvider.validateToken(tokenUser)) {
+
+                    tokenUser = jwtTokenProvider.generateToken(username);
+                    tokenLoginMap.put(username, tokenUser);
+                }
+                JwtResponse result = new  JwtResponse(tokenUser, username, existingUser.getRoles().stream()
+                        .map(Role::getCode)
+                        .collect(Collectors.toList()));
+                System.out.println(result.getToken());
+                return result;
+            }
+        }
+
+        } catch (GeneralSecurityException | IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

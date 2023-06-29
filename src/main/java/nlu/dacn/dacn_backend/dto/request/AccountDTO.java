@@ -2,6 +2,7 @@ package nlu.dacn.dacn_backend.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nlu.dacn.dacn_backend.entity.Role;
 import nlu.dacn.dacn_backend.enumv1.State;
@@ -25,4 +26,5 @@ public class AccountDTO extends AbstractDTO<AccountDTO>{
     private Integer status;
     private State state;
     private List<Role> roles;
+
 }
