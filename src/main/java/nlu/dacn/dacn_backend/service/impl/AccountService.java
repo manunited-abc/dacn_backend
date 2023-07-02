@@ -28,7 +28,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -57,8 +57,7 @@ public class AccountService implements IAccountService {
     private final AccountConverter accountConverter;
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private OAuth2AuthorizedClientService authorizedClientService;
+
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String clientId;
