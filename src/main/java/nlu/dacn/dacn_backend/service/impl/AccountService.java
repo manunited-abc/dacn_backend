@@ -277,16 +277,22 @@ public class AccountService implements IAccountService {
         // Xác thực tokenId
         GoogleIdToken idToken = verifier.verify(request.getTokenId());
         if (idToken != null) {
+
             // Xác thực thành công, trả về thông tin người dùng
             GoogleIdToken.Payload payload = idToken.getPayload();
 
             String email = payload.getEmail();
             String name = (String) payload.get("name");
-            System.out.println(name);
-            Account existingUser = findByEmail(email).get();
 
-            if (existingUser != null) {
-                String username = existingUser.getUserName();
+            Optional<Account> existingUser = findByEmail(email);
+            Account loginAcount = null;
+            if (existingUser.isPresent()){
+                 loginAcount = existingUser.get();
+            }
+
+            if (loginAcount != null) {
+
+                String username = loginAcount.getUserName();
 
                 String tokenUser = tokenLoginMap.get(username);
 
@@ -295,11 +301,14 @@ public class AccountService implements IAccountService {
                     tokenUser = jwtTokenProvider.generateToken(username);
                     tokenLoginMap.put(username, tokenUser);
                 }
-                JwtResponse result = new  JwtResponse(tokenUser, username, existingUser.getRoles().stream()
+                JwtResponse result = new  JwtResponse(tokenUser, username, loginAcount.getRoles().stream()
                         .map(Role::getCode)
                         .collect(Collectors.toList()));
                 System.out.println(result.getToken());
                 return result;
+            }
+            else {
+                throw new ServiceException(HttpStatus.NOT_FOUND, "Không có tài khoảng");
             }
         }
 
