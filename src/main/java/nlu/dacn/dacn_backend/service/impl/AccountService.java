@@ -285,6 +285,7 @@ public class AccountService implements IAccountService {
 
             String email = payload.getEmail();
             String name = (String) payload.get("name");
+          
 
             Optional<Account> existingUser = findByEmail(email);
             Account loginAcount = null;
@@ -293,7 +294,7 @@ public class AccountService implements IAccountService {
             }
 
             if (loginAcount == null) {
-                AccountDTO newAccount = AccountDTO.builder().userName(name).email(email).password(generateRandomPassword(10)).build();
+                AccountDTO newAccount = AccountDTO.builder().fullName(name).userName(generateUserNameGG(email)).email(email).password(generateRandomPassword(10)).build();
                 addAccount(newAccount);
                 loginAcount = findByEmail(email).get();
 
@@ -335,6 +336,13 @@ public class AccountService implements IAccountService {
         }
 
         return password.toString();
+    }
+
+    public String generateUserNameGG(String email){
+        int atIndex = email.indexOf("@");
+        String username = email.substring(0, atIndex);
+
+        return  username;
     }
 
 
