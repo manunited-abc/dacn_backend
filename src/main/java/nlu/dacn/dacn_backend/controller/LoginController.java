@@ -33,7 +33,7 @@ public class LoginController {
     @Value("${spring.security.oauth2.client.registration.facebook.redirect-uri}")
     private String redirectUri;
 
-    @Value("${spring.security.oauth2.client.registration.facebook.redirect-uri}")
+    @Value("${spring.security.oauth2.client.provider.facebook.token-uri}")
     private String token_uri;
 
     private FacebookApiService facebookApiService;
