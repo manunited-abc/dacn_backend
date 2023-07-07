@@ -28,11 +28,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.stream.Collectors;
 import com.google.api.client.http.HttpTransport;
@@ -58,8 +59,11 @@ public class AccountService implements IAccountService {
     private final PasswordEncoder passwordEncoder;
     private final OAuth2AuthorizedClientService authorizedClientService;
 
+
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String clientId;
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?";
+
 
 
 
@@ -275,36 +279,70 @@ public class AccountService implements IAccountService {
         // Xác thực tokenId
         GoogleIdToken idToken = verifier.verify(request.getTokenId());
         if (idToken != null) {
+
             // Xác thực thành công, trả về thông tin người dùng
             GoogleIdToken.Payload payload = idToken.getPayload();
 
             String email = payload.getEmail();
             String name = (String) payload.get("name");
-            System.out.println(name);
-            Account existingUser = findByEmail(email).get();
+          
 
-            if (existingUser != null) {
-                String username = existingUser.getUserName();
-
-                String tokenUser = tokenLoginMap.get(username);
-
-                if (tokenUser == null || !jwtTokenProvider.validateToken(tokenUser)) {
-
-                    tokenUser = jwtTokenProvider.generateToken(username);
-                    tokenLoginMap.put(username, tokenUser);
-                }
-                JwtResponse result = new  JwtResponse(tokenUser, username, existingUser.getRoles().stream()
-                        .map(Role::getCode)
-                        .collect(Collectors.toList()));
-                System.out.println(result.getToken());
-                return result;
+            Optional<Account> existingUser = findByEmail(email);
+            Account loginAcount = null;
+            if (existingUser.isPresent()){
+                 loginAcount = existingUser.get();
             }
+
+            if (loginAcount == null) {
+                AccountDTO newAccount = AccountDTO.builder().fullName(name).userName(generateUserNameGG(email)).email(email).password(generateRandomPassword(10)).build();
+                addAccount(newAccount);
+                loginAcount = findByEmail(email).get();
+
+            }
+
+            String username = loginAcount.getUserName();
+
+            String tokenUser = tokenLoginMap.get(username);
+
+            if (tokenUser == null || !jwtTokenProvider.validateToken(tokenUser)) {
+
+                tokenUser = jwtTokenProvider.generateToken(username);
+                tokenLoginMap.put(username, tokenUser);
+            }
+            JwtResponse result = new  JwtResponse(tokenUser, username, loginAcount.getRoles().stream()
+                    .map(Role::getCode)
+                    .collect(Collectors.toList()));
+            System.out.println(result.getToken());
+            return result;
+
+        }
+        else {
+            throw new ServiceException(HttpStatus.NOT_FOUND, "Lỗi google google");
         }
 
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static String generateRandomPassword(int length) {
+        StringBuilder password = new StringBuilder(length);
+        SecureRandom random = new SecureRandom();
+
+        for (int i = 0; i < length; i++) {
+            int randomIndex = random.nextInt(CHARACTERS.length());
+            password.append(CHARACTERS.charAt(randomIndex));
+        }
+
+        return password.toString();
+    }
+
+    public String generateUserNameGG(String email){
+        int atIndex = email.indexOf("@");
+        String username = email.substring(0, atIndex);
+
+        return  username;
     }
 
 
