@@ -56,9 +56,7 @@ public class AccountService implements IAccountService {
     private final ApplicationContext applicationContext;
     private final AccountConverter accountConverter;
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private OAuth2AuthorizedClientService authorizedClientService;
+    private final OAuth2AuthorizedClientService authorizedClientService;
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String clientId;
