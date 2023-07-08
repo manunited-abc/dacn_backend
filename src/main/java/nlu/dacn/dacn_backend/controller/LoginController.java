@@ -14,6 +14,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -33,7 +34,7 @@ public class LoginController {
     @Value("${spring.security.oauth2.client.registration.facebook.redirect-uri}")
     private String redirectUri;
 
-    @Value("${spring.security.oauth2.client.registration.facebook.redirect-uri}")
+    @Value("${spring.security.oauth2.client.provider.facebook.token-uri}")
     private String token_uri;
 
     private FacebookApiService facebookApiService;
@@ -55,10 +56,10 @@ public class LoginController {
 
 
     @GetMapping("oauth2/authorization/facebook/v2")
-    public ResponseEntity<?>  handleFacebookCallback(@RequestParam("code") String code) {
+    public  ModelAndView handleFacebookCallback(@RequestParam("code") String code,@RequestParam("state")String state) {
         // 1. Lưu mã code
         String authorizationCode = code;
-
+        System.out.println("state: "+state);
         // 2. Gửi yêu cầu POST để trao đổi mã code và lấy token truy cập từ Facebook
         String accessToken = exchangeAuthorizationCodeForAccessToken(authorizationCode);
 
@@ -66,7 +67,8 @@ public class LoginController {
         String email = facebookApiService.getUserEmailFromFacebook(accessToken);
         String name = facebookApiService.getUserNameFromFacebook(accessToken);
         // Chuyển hướng người dùng đến trang /home
-        return ResponseEntity.ok(new ResponMessenger("aaaaa"));
+//        return ResponseEntity.ok(new ResponMessenger("aaaaa"));
+        return new ModelAndView("redirect:" +state);
     }
 
     private String exchangeAuthorizationCodeForAccessToken(String authorizationCode) {
