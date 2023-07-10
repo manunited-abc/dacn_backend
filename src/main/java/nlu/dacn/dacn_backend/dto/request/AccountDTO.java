@@ -26,5 +26,6 @@ public class AccountDTO extends AbstractDTO<AccountDTO>{
     private Integer status;
     private State state;
     private List<Role> roles;
+    private boolean noPassword;
 
 }

@@ -1,6 +1,7 @@
 package nlu.dacn.dacn_backend.service;
 
 import nlu.dacn.dacn_backend.dto.request.AccountDTO;
+import nlu.dacn.dacn_backend.dto.request.LoginFacebookRequest;
 import nlu.dacn.dacn_backend.dto.request.LoginGoogleRequest;
 import nlu.dacn.dacn_backend.dto.response.JwtResponse;
 import nlu.dacn.dacn_backend.entity.Account;
@@ -29,4 +30,6 @@ public interface IAccountService {
     Optional<Account> findByUserName(String username);
 
     JwtResponse loginGoogle(LoginGoogleRequest loginGoogleRequest);
+
+    JwtResponse loginFacebook(LoginFacebookRequest loginFacebookRequest);
 }
