@@ -28,7 +28,6 @@ public class Account extends BaseEntity {
     @NotBlank
     @Column
     private String userName;
-    @NotBlank
     @Column
     private String password;
     @Column
