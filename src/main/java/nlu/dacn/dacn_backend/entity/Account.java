@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import nlu.dacn.dacn_backend.enumv1.LoginType;
 import nlu.dacn.dacn_backend.enumv1.State;
 
 import javax.persistence.*;
@@ -62,4 +63,7 @@ public class Account extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderTest> orderTests;
+
+
+    private LoginType loginType = LoginType.NONE;
 }

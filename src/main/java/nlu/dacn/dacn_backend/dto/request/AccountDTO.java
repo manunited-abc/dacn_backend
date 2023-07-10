@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nlu.dacn.dacn_backend.entity.Role;
+import nlu.dacn.dacn_backend.enumv1.LoginType;
 import nlu.dacn.dacn_backend.enumv1.State;
 
 import java.util.Date;
@@ -27,5 +28,6 @@ public class AccountDTO extends AbstractDTO<AccountDTO>{
     private State state;
     private List<Role> roles;
     private boolean noPassword;
+    private LoginType loginType = LoginType.NONE;
 
 }
