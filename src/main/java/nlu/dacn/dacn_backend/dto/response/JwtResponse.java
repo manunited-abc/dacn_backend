@@ -13,7 +13,6 @@ public class JwtResponse {
     private String token;
     private String type = "Bearer";
     private String name;
-    //    private Collection<? extends GrantedAuthority> roles;
     private List<String> roles;
 
     public JwtResponse(String token, String name, List<String> roles) {

@@ -5,6 +5,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import lombok.RequiredArgsConstructor;
 import nlu.dacn.dacn_backend.converter.AccountConverter;
 import nlu.dacn.dacn_backend.dto.request.AccountDTO;
+import nlu.dacn.dacn_backend.dto.request.LoginFacebookRequest;
 import nlu.dacn.dacn_backend.dto.request.LoginGoogleRequest;
 import nlu.dacn.dacn_backend.dto.response.JwtResponse;
 import nlu.dacn.dacn_backend.entity.Account;
@@ -18,7 +19,6 @@ import nlu.dacn.dacn_backend.repository.AccountRepository;
 import nlu.dacn.dacn_backend.security.jwt.JwtTokenProvider;
 import nlu.dacn.dacn_backend.security.useprincal.UserPrinciple;
 import nlu.dacn.dacn_backend.service.IAccountService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -36,6 +36,7 @@ import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.util.*;
 import java.util.stream.Collectors;
+
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -50,8 +51,6 @@ public class AccountService implements IAccountService {
     private final JwtTokenProvider jwtTokenProvider;
     private final Map<String, String> tokenLoginMap = new HashMap<>();
 
- 
-
 
     private final RoleService roleService;
     private final ApplicationContext applicationContext;
@@ -63,8 +62,6 @@ public class AccountService implements IAccountService {
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String clientId;
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?";
-
-
 
 
     @Override
@@ -188,12 +185,13 @@ public class AccountService implements IAccountService {
 
         dto.setRoles(roles);
         account = accountConverter.toAccount(dto);
-        account.setPassword(passwordEncoder.encode(account.getPassword()));
+        if(!dto.isNoPassword()) {
+            account.setPassword(passwordEncoder.encode(account.getPassword()));
+        }
         account = accountRepository.save(account);
         applicationContext.publishEvent(new AccountCreatedEvent(account));
         return accountConverter.toAccountDTO(account);
     }
-
 
 
     @Override
@@ -271,59 +269,86 @@ public class AccountService implements IAccountService {
     @Override
     public JwtResponse loginGoogle(LoginGoogleRequest request) {
         try {
-        HttpTransport transport = new NetHttpTransport();
-        JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
-        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
-                .setAudience(Collections.singletonList(clientId))
-                .build();
-        // Xác thực tokenId
-        GoogleIdToken idToken = verifier.verify(request.getTokenId());
-        if (idToken != null) {
+            HttpTransport transport = new NetHttpTransport();
+            JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+                    .setAudience(Collections.singletonList(clientId))
+                    .build();
+            // Xác thực tokenId
+            GoogleIdToken idToken = verifier.verify(request.getTokenId());
+            if (idToken != null) {
 
-            // Xác thực thành công, trả về thông tin người dùng
-            GoogleIdToken.Payload payload = idToken.getPayload();
+                // Xác thực thành công, trả về thông tin người dùng
+                GoogleIdToken.Payload payload = idToken.getPayload();
 
-            String email = payload.getEmail();
-            String name = (String) payload.get("name");
-          
+                String email = payload.getEmail();
+                String name = (String) payload.get("name");
 
-            Optional<Account> existingUser = findByEmail(email);
-            Account loginAcount = null;
-            if (existingUser.isPresent()){
-                 loginAcount = existingUser.get();
+
+                Optional<Account> existingUser = findByEmail(email);
+                Account loginAcount = null;
+                if (existingUser.isPresent()) {
+                    loginAcount = existingUser.get();
+                }
+
+                if (loginAcount == null) {
+                    AccountDTO newAccount = AccountDTO.builder().fullName(name).userName(generateUserNameGG(email)).email(email).password(generateRandomPassword(10)).build();
+                    addAccount(newAccount);
+                    loginAcount = findByEmail(email).get();
+
+                }
+
+                String username = loginAcount.getUserName();
+
+                String tokenUser = tokenLoginMap.get(username);
+
+                if (tokenUser == null || !jwtTokenProvider.validateToken(tokenUser)) {
+
+                    tokenUser = jwtTokenProvider.generateToken(username);
+                    tokenLoginMap.put(username, tokenUser);
+                }
+                JwtResponse result = new JwtResponse(tokenUser, username, loginAcount.getRoles().stream()
+                        .map(Role::getCode)
+                        .collect(Collectors.toList()));
+                System.out.println(result.getToken());
+                return result;
+
+            } else {
+                throw new ServiceException(HttpStatus.NOT_FOUND, "Lỗi google google");
             }
-
-            if (loginAcount == null) {
-                AccountDTO newAccount = AccountDTO.builder().fullName(name).userName(generateUserNameGG(email)).email(email).password(generateRandomPassword(10)).build();
-                addAccount(newAccount);
-                loginAcount = findByEmail(email).get();
-
-            }
-
-            String username = loginAcount.getUserName();
-
-            String tokenUser = tokenLoginMap.get(username);
-
-            if (tokenUser == null || !jwtTokenProvider.validateToken(tokenUser)) {
-
-                tokenUser = jwtTokenProvider.generateToken(username);
-                tokenLoginMap.put(username, tokenUser);
-            }
-            JwtResponse result = new  JwtResponse(tokenUser, username, loginAcount.getRoles().stream()
-                    .map(Role::getCode)
-                    .collect(Collectors.toList()));
-            System.out.println(result.getToken());
-            return result;
-
-        }
-        else {
-            throw new ServiceException(HttpStatus.NOT_FOUND, "Lỗi google google");
-        }
 
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public JwtResponse loginFacebook(LoginFacebookRequest request) {
+        String email = request.getEmail();
+        String fullName = request.getFullName();
+        String username;
+
+        Optional<Account> optional = accountRepository.findByEmail(email);
+        Account account;
+        if (optional.isEmpty()) {
+            AccountDTO accountDTO = AccountDTO.builder()
+                    .fullName(createNewUserName())
+                    .email(fullName)
+                    .noPassword(true)
+                    .build();
+            addAccount(accountDTO);
+            account = accountConverter.toAccount(accountDTO);
+        } else {
+            account = optional.get();
+        }
+
+        username = account.getUserName();
+        String tokenUser = jwtTokenProvider.generateToken(username);
+        tokenLoginMap.put(username, tokenUser);
+        return new JwtResponse(tokenUser, username, account.getRoles().stream()
+                .map(Role::getCode)
+                .collect(Collectors.toList()));
     }
 
     public static String generateRandomPassword(int length) {
@@ -338,12 +363,15 @@ public class AccountService implements IAccountService {
         return password.toString();
     }
 
-    public String generateUserNameGG(String email){
+    public String generateUserNameGG(String email) {
         int atIndex = email.indexOf("@");
         String username = email.substring(0, atIndex);
 
-        return  username;
+        return username;
     }
 
-
+    // Tạo username cho tài khoản google và facebook
+    private String createNewUserName() {
+        return "user" + (accountRepository.findMaxId() + 1);
+    }
 }

@@ -1,8 +1,10 @@
 package nlu.dacn.dacn_backend.controller;
 
+import nlu.dacn.dacn_backend.dto.request.LoginFacebookRequest;
 import nlu.dacn.dacn_backend.dto.request.LoginForm;
 import nlu.dacn.dacn_backend.dto.request.LoginGoogleRequest;
 import nlu.dacn.dacn_backend.dto.response.AccessTokenResponse;
+import nlu.dacn.dacn_backend.dto.response.JwtResponse;
 import nlu.dacn.dacn_backend.dto.response.ResponMessenger;
 import nlu.dacn.dacn_backend.service.IAccountService;
 import nlu.dacn.dacn_backend.service.impl.FacebookApiService;
@@ -56,19 +58,22 @@ public class LoginController {
 
 
     @GetMapping("oauth2/authorization/facebook/v2")
-    public  ModelAndView handleFacebookCallback(@RequestParam("code") String code,@RequestParam("state")String state) {
+    public ModelAndView handleFacebookCallback(@RequestParam("code") String code, @RequestParam("state") String state) {
         // 1. Lưu mã code
         String authorizationCode = code;
-        System.out.println("state: "+state);
+        System.out.println("state: " + state);
         // 2. Gửi yêu cầu POST để trao đổi mã code và lấy token truy cập từ Facebook
         String accessToken = exchangeAuthorizationCodeForAccessToken(authorizationCode);
 
         facebookApiService = new FacebookApiService();
         String email = facebookApiService.getUserEmailFromFacebook(accessToken);
         String name = facebookApiService.getUserNameFromFacebook(accessToken);
-        // Chuyển hướng người dùng đến trang /home
-//        return ResponseEntity.ok(new ResponMessenger("aaaaa"));
-        return new ModelAndView("redirect:" +state);
+
+        LoginFacebookRequest request = LoginFacebookRequest.builder().email(email).fullName(name).build();
+        JwtResponse jwtResponse = accountService.loginFacebook(request);
+
+        // Chuyển hướng người dùng đến trang /home\
+        return new ModelAndView("redirect:" + state+"?token="+jwtResponse.getToken());
     }
 
     private String exchangeAuthorizationCodeForAccessToken(String authorizationCode) {
