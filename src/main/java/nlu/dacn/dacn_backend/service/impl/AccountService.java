@@ -291,17 +291,19 @@ public class AccountService implements IAccountService {
                     loginAcount = existingUser.get();
                 }
 
-                if (loginAcount == null) {
-                    AccountDTO newAccount = AccountDTO.builder().fullName(name).userName(generateUserNameGG(email)).email(email).password(generateRandomPassword(10)).build();
-                    addAccount(newAccount);
-                    loginAcount = findByEmail(email).get();
+                else   {
+                    AccountDTO accountDTO = AccountDTO.builder()
+                            .fullName(name)
+                            .userName(createNewUserName())
+                            .email(email)
+                            .noPassword(true)
+                            .build();
+                    addAccount(accountDTO);
+                    loginAcount = accountConverter.toAccount(accountDTO);
 
                 }
-
                 String username = loginAcount.getUserName();
-
                 String tokenUser = tokenLoginMap.get(username);
-
                 if (tokenUser == null || !jwtTokenProvider.validateToken(tokenUser)) {
 
                     tokenUser = jwtTokenProvider.generateToken(username);
