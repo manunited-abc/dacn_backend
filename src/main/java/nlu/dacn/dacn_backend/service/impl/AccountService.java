@@ -33,7 +33,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,7 +68,7 @@ public class AccountService implements IAccountService {
         // Kiểm tra tài khoản có đúng trạng thái hay không
         validateAccount(username);
         // Xác thực username và password
-        Authentication authenticate = null;
+        Authentication authenticate;
         try {
             authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (Exception e) {
@@ -136,9 +135,14 @@ public class AccountService implements IAccountService {
         if (jwtTokenProvider.validateToken(token)) {
             password = password.trim();
             String username = jwtTokenProvider.getUserNameFromToken(token);
-            Account account = accountRepository.findByUserName(username).get();
-            account.setPassword(passwordEncoder.encode(password));
-            accountRepository.save(account);
+            Optional<Account> optional = accountRepository.findByUserName(username);
+            if (optional.isPresent()) {
+                Account account = optional.get();
+                account.setPassword(passwordEncoder.encode(password));
+                accountRepository.save(account);
+            } else {
+                throw new ServiceException("Không tìm thấy tài khoản");
+            }
         } else {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Token không hợp lệ hoặc đã hết hiệu lực");
         }
@@ -185,7 +189,7 @@ public class AccountService implements IAccountService {
 
         dto.setRoles(roles);
         account = accountConverter.toAccount(dto);
-        if(!dto.isNoPassword()) {
+        if (!dto.isNoPassword()) {
             account.setPassword(passwordEncoder.encode(account.getPassword()));
         }
         account = accountRepository.save(account);
@@ -204,7 +208,7 @@ public class AccountService implements IAccountService {
         Account account;
         String username = jwtTokenProvider.getUserNameFromToken(token.trim());
         Optional<Account> optionalAccount = accountRepository.findByUserName(username);
-        if (!optionalAccount.isPresent()) {
+        if (optionalAccount.isEmpty()) {
             throw new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy thông tin tài khoản: " + username);
         }
         Account oldAccount = optionalAccount.get();
@@ -221,7 +225,7 @@ public class AccountService implements IAccountService {
         Account admin;
         String username = jwtTokenProvider.getUserNameFromToken(token.trim());
         Optional<Account> optionalAccount = accountRepository.findByUserName(username);
-        if (!optionalAccount.isPresent()) {
+        if (optionalAccount.isEmpty()) {
             throw new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy thông tin tài khoản: " + username);
         }
 
@@ -286,12 +290,10 @@ public class AccountService implements IAccountService {
 
 
                 Optional<Account> existingUser = findByEmail(email);
-                Account loginAcount = null;
+                Account loginAcount;
                 if (existingUser.isPresent()) {
                     loginAcount = existingUser.get();
-                }
-
-                else   {
+                } else {
                     AccountDTO accountDTO = AccountDTO.builder()
                             .fullName(name)
                             .userName(createNewUserName())
@@ -347,29 +349,13 @@ public class AccountService implements IAccountService {
 
         username = account.getUserName();
         String tokenUser = jwtTokenProvider.generateToken(username);
-        tokenLoginMap.put(username, tokenUser);
+        if (tokenUser == null || !jwtTokenProvider.validateToken(tokenUser)) {
+            tokenUser = jwtTokenProvider.generateToken(username);
+            tokenLoginMap.put(username, tokenUser);
+        }
         return new JwtResponse(tokenUser, username, account.getRoles().stream()
                 .map(Role::getCode)
                 .collect(Collectors.toList()));
-    }
-
-    public static String generateRandomPassword(int length) {
-        StringBuilder password = new StringBuilder(length);
-        SecureRandom random = new SecureRandom();
-
-        for (int i = 0; i < length; i++) {
-            int randomIndex = random.nextInt(CHARACTERS.length());
-            password.append(CHARACTERS.charAt(randomIndex));
-        }
-
-        return password.toString();
-    }
-
-    public String generateUserNameGG(String email) {
-        int atIndex = email.indexOf("@");
-        String username = email.substring(0, atIndex);
-
-        return username;
     }
 
     // Tạo username cho tài khoản google và facebook
