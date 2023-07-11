@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import nlu.dacn.dacn_backend.dto.response.ResponMessenger;
 import nlu.dacn.dacn_backend.entity.Account;
 import nlu.dacn.dacn_backend.service.impl.AccountService;
+import nlu.dacn.dacn_backend.utils.TokenUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,16 +19,10 @@ import nlu.dacn.dacn_backend.dto.request.AccountDTO;
 import nlu.dacn.dacn_backend.exception.ServiceException;
 
 
-
-
-
-
 import org.springframework.web.bind.annotation.*;
 
 
-import javax.security.auth.login.AccountException;
 import javax.validation.Valid;
-import java.util.List;
 
 
 @RestController
@@ -37,12 +32,14 @@ public class AccountController {
     private final AccountService accountService;
 
     @PutMapping("/account/update")
-    public AccountDTO updateAccount(@RequestBody AccountDTO accountDTO, @RequestParam("token") String token) {
+    public AccountDTO updateAccount(@RequestBody AccountDTO accountDTO, @RequestHeader("Authorization") String authHeader) {
+        String token = TokenUtils.getTokenFromHeader(authHeader);
         return accountService.update(accountDTO, token);
     }
 
     @PutMapping("/account/admin/update")
-    public ResponseEntity<?> updateAccountByAdmin(@RequestBody AccountDTO accountDTO, @RequestParam("token") String token) {
+    public ResponseEntity<?> updateAccountByAdmin(@RequestBody AccountDTO accountDTO, @RequestHeader("Authorization") String authHeader) {
+        String token = TokenUtils.getTokenFromHeader(authHeader);
         accountService.updateAccountByAdmin(accountDTO, token);
         return new ResponseEntity<>(new ResponMessenger("Cập nhật tài khoản thành công"), HttpStatus.OK);
     }
@@ -54,7 +51,8 @@ public class AccountController {
     }
 
     @PostMapping("/account/reset-password")
-    public ResponseEntity<?> processResetPassword(@RequestParam("token") String token, @RequestParam("password") String password) {
+    public ResponseEntity<?> processResetPassword(@RequestParam("password") String password, @RequestHeader("Authorization") String authHeader) {
+        String token = TokenUtils.getTokenFromHeader(authHeader);
         accountService.processResetPassword(token, password);
         return new ResponseEntity<>(new ResponMessenger("Thay đổi mật khẩu thành công"), HttpStatus.OK);
     }
@@ -70,7 +68,8 @@ public class AccountController {
     }
 
     @GetMapping("/account/detail")
-    public Account getAccount(@RequestParam("token") String token) {
+    public Account getAccount(@RequestHeader("Authorization") String authHeader) {
+        String token = TokenUtils.getTokenFromHeader(authHeader);
         return accountService.findByUserName(token).get();
     }
 

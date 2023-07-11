@@ -51,11 +51,10 @@ public class LoginController {
         return ResponseEntity.ok(accountService.loginGoogle(request));
     }
 
-    @GetMapping("/test")
-    public String test() {
-        return "Test";
+    @PostMapping("auth/loginFacebook")
+    public ResponseEntity<?> loginWithFacebook(@RequestBody LoginFacebookRequest request) {
+        return ResponseEntity.ok(accountService.loginFacebook(request));
     }
-
 
     @GetMapping("oauth2/authorization/facebook/v2")
     public ModelAndView handleFacebookCallback(@RequestParam("code") String code, @RequestParam("state") String state) {
