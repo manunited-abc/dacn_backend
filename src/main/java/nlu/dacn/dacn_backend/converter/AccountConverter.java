@@ -26,6 +26,7 @@ public class AccountConverter {
                 .address(account.getAddress())
                 .addressDetail(account.getAddressDetail())
                 .state(account.getState())
+                .loginType(account.getLoginType())
                 .build();
         if (null != dto.getId()) {
             dto.setId(account.getId());
@@ -66,6 +67,9 @@ public class AccountConverter {
         }
         if (dto.getRoles() != null && dto.getRoles().size() > 0) {
             account.setRoles(dto.getRoles());
+        }
+        if (dto.getLoginType() != null ) {
+            account.setLoginType(dto.getLoginType());
         }
         return account;
     }

@@ -10,6 +10,7 @@ import nlu.dacn.dacn_backend.dto.request.LoginGoogleRequest;
 import nlu.dacn.dacn_backend.dto.response.JwtResponse;
 import nlu.dacn.dacn_backend.entity.Account;
 import nlu.dacn.dacn_backend.entity.Role;
+import nlu.dacn.dacn_backend.enumv1.LoginType;
 import nlu.dacn.dacn_backend.enumv1.RoleType;
 import nlu.dacn.dacn_backend.enumv1.State;
 import nlu.dacn.dacn_backend.evenlistener.AccountCreatedEvent;
@@ -161,9 +162,12 @@ public class AccountService implements IAccountService {
         if (accountRepository.findByUserName(dto.getUserName().trim()).isPresent()) {
             throw new ServiceException(HttpStatus.FOUND, "Tên tài khoản đã tồn tại");
         }
-        if (findByEmail(dto.getEmail().trim()).isPresent()) {
-            throw new ServiceException(HttpStatus.FOUND, "Email đã tồn tại");
+        if(accountRepository.findByEmailAndLoginType(dto.getEmail(),dto.getLoginType()).isPresent()){
+            throw new ServiceException(HttpStatus.FOUND, "Tên tài khoản đã tồn tại");
         }
+//        if (findByEmail(dto.getEmail().trim()).isPresent()) {
+//            throw new ServiceException(HttpStatus.FOUND, "Email đã tồn tại");
+//        }
         List<Role> roles = new ArrayList<>();
         List<Role> roleList = dto.getRoles();
         if (roleList.size() > 0) {
@@ -289,7 +293,7 @@ public class AccountService implements IAccountService {
                 String name = (String) payload.get("name");
 
 
-                Optional<Account> existingUser = findByEmail(email);
+                Optional<Account> existingUser = findByEmailAndLoginType(email,LoginType.GOOGLE);
                 Account loginAcount;
                 if (existingUser.isPresent()) {
                     loginAcount = existingUser.get();
@@ -299,6 +303,7 @@ public class AccountService implements IAccountService {
                             .userName(createNewUserName())
                             .email(email)
                             .noPassword(true)
+                            .loginType(LoginType.GOOGLE)
                             .build();
                     addAccount(accountDTO);
                     loginAcount = accountConverter.toAccount(accountDTO);
@@ -327,19 +332,25 @@ public class AccountService implements IAccountService {
         return null;
     }
 
+    private Optional<Account> findByEmailAndLoginType(String email, LoginType google) {
+        return accountRepository.findByEmailAndLoginType(email,google);
+    }
+
     @Override
     public JwtResponse loginFacebook(LoginFacebookRequest request) {
         String email = request.getEmail();
         String fullName = request.getFullName();
         String username;
 
-        Optional<Account> optional = accountRepository.findByEmail(email);
+        Optional<Account> optional = accountRepository.findByEmailAndLoginType(email, LoginType.FACEBOOK);
         Account account;
         if (optional.isEmpty()) {
             AccountDTO accountDTO = AccountDTO.builder()
-                    .fullName(createNewUserName())
-                    .email(fullName)
+                    .fullName(fullName)
+                    .userName(createNewUserName())
+                    .email(email)
                     .noPassword(true)
+                    .loginType(LoginType.FACEBOOK)
                     .build();
             addAccount(accountDTO);
             account = accountConverter.toAccount(accountDTO);
