@@ -6,8 +6,9 @@ import lombok.Setter;
 import nlu.dacn.dacn_backend.enumv1.OrderStatus;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Table
@@ -23,15 +24,13 @@ public class OrderTest extends BaseEntity {
 
     @ElementCollection
     @CollectionTable(name = "order_laptop", joinColumns = @JoinColumn(name = "order_id"))
-    @MapKeyJoinColumn(name = "laptop_id")
-    @Column(name = "quantity")
-    private Map<Laptop, Integer> orderedLaptops = new HashMap<>();
+    private List<LaptopQuantityEntry> orderLaptops = new ArrayList<>();
 
     public double calculateTotalPrice() {
         double totalPrice = 0;
-        for (Map.Entry<Laptop, Integer> entry : orderedLaptops.entrySet()) {
-            Laptop laptop = entry.getKey();
-            int quantity = entry.getValue();
+        for (LaptopQuantityEntry entry : orderLaptops) {
+            Laptop laptop = entry.getLaptop();
+            int quantity = entry.getQuantity();
             double price = laptop.getPrice();
             totalPrice += price * quantity;
         }

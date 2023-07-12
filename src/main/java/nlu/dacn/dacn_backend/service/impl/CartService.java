@@ -7,6 +7,7 @@ import nlu.dacn.dacn_backend.dto.request.LaptopDTO;
 import nlu.dacn.dacn_backend.dto.request.TokenAndIdsDTO;
 import nlu.dacn.dacn_backend.entity.Account;
 import nlu.dacn.dacn_backend.entity.Cart;
+import nlu.dacn.dacn_backend.entity.LaptopQuantityEntry;
 import nlu.dacn.dacn_backend.entity.Laptop;
 import nlu.dacn.dacn_backend.exception.ServiceException;
 import nlu.dacn.dacn_backend.repository.AccountRepository;
@@ -17,10 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -38,20 +36,28 @@ public class CartService implements ICartService {
         if (accountOptional.isPresent()) {
             Account account = accountOptional.get();
             Cart cart = account.getCart();
-            Map<Laptop, Integer> cartLaptop = cart.getCartLaptop();
+
+            List<LaptopQuantityEntry> cartLaptopEntries = cart.getCartLaptop();
+            Map<Laptop, Integer> cartLaptopMap = new HashMap<>();
             List<LaptopDTO> dtoList = cartDTO.getLaptopDTOs();
 
             LaptopDTO laptopDTO;
-            if (!cartLaptop.isEmpty()) {
-                List<Laptop> laptopList = new ArrayList<>(cartLaptop.keySet());
-                for (Laptop laptop : laptopList) {
+            if (!cartLaptopEntries.isEmpty()) {
+                List<Laptop> laptopList = new ArrayList<>();
+                for (LaptopQuantityEntry entry : cartLaptopEntries) {
+                    Laptop laptop = entry.getLaptop();
+                    int quantity = entry.getQuantity();
+                    laptopList.add(laptop);
+                    cartLaptopMap.put(laptop, entry.getQuantity());
+
                     laptopDTO = laptopConverter.toLaptopDTO(laptop);
-                    laptopDTO.setQuantity(cartLaptop.get(laptop));
+                    laptopDTO.setQuantity(quantity);
                     laptopDTO.setTotalAmout(laptopDTO.getPrice() * laptopDTO.getQuantity());
                     dtoList.add(laptopDTO);
                     cartDTO.setTotalPayment(cartDTO.getTotalPayment() + laptopDTO.getTotalAmout());
                 }
             }
+            Collections.reverse(cartDTO.getLaptopDTOs());
             return cartDTO;
         }
         return new CartDTO();
@@ -77,11 +83,24 @@ public class CartService implements ICartService {
         Laptop laptop = laptopOptional.get();
         Cart cart = account.getCart();
 
-        Map<Laptop, Integer> cartLaptop = cart.getCartLaptop();
-        if (cartLaptop.containsKey(laptop)) {
-            cartLaptop.put(laptop, quantity + cartLaptop.get(laptop));
+        List<LaptopQuantityEntry> cartLaptopEntries = cart.getCartLaptop();
+        Map<Laptop, Integer> laptopQuantityMap = new HashMap<>();
+        for (LaptopQuantityEntry entry : cartLaptopEntries) {
+            laptopQuantityMap.put(entry.getLaptop(), entry.getQuantity());
+        }
+
+        if (laptopQuantityMap.containsKey(laptop)) {
+            for (LaptopQuantityEntry entry : cartLaptopEntries) {
+                if (entry.getLaptop().equals(laptop)) {
+                    entry.setQuantity(quantity + entry.getQuantity());
+                    break;
+                }
+            }
         } else {
-            cartLaptop.put(laptop, quantity);
+            LaptopQuantityEntry entry = new LaptopQuantityEntry();
+            entry.setLaptop(laptop);
+            entry.setQuantity(quantity);
+            cartLaptopEntries.add(entry);
         }
         accountRepository.save(account);
     }
@@ -96,15 +115,19 @@ public class CartService implements ICartService {
         if (accountOptional.isPresent()) {
             Account account = accountOptional.get();
             Cart cart = account.getCart();
-            Map<Laptop, Integer> cartLaptop = cart.getCartLaptop();
+            List<LaptopQuantityEntry> cartLaptopEntries = cart.getCartLaptop();
 
             Optional<Laptop> optionalLaptop;
             Laptop laptop;
-            for (Long id : ids) {
-                optionalLaptop = laptopRepository.findById(id);
-                if (optionalLaptop.isPresent()) {
-                    laptop = optionalLaptop.get();
-                    cartLaptop.remove(laptop);
+            Long id = ids.get(0);
+            optionalLaptop = laptopRepository.findById(id);
+            if (optionalLaptop.isPresent()) {
+                laptop = optionalLaptop.get();
+                for (LaptopQuantityEntry entry : cartLaptopEntries) {
+                    if (entry.getLaptop().equals(laptop)) {
+                        cartLaptopEntries.remove(entry);
+                        break;
+                    }
                 }
             }
             accountRepository.save(account);
@@ -119,18 +142,17 @@ public class CartService implements ICartService {
         if (accountOptional.isPresent()) {
             Account account = accountOptional.get();
             Cart cart = account.getCart();
-            Map<Laptop, Integer> cartLaptop = cart.getCartLaptop();
+            List<LaptopQuantityEntry> cartLaptopEntries = cart.getCartLaptop();
 
-            Optional<Laptop> optionalLaptop;
+            Long id = dto.getIds().get(0);
+            Optional<Laptop> optional = laptopRepository.findById(id);
             Laptop laptop;
-            int quantity;
-            for (Long id : dto.getIds()) {
-                optionalLaptop = laptopRepository.findById(id);
-                if (optionalLaptop.isPresent()) {
-                    laptop = optionalLaptop.get();
-                    if (cartLaptop.containsKey(laptop)) {
-                        quantity = cartLaptop.get(laptop);
-                        cartLaptop.put(laptop, quantity > 1 ? quantity - 1 : 1);
+            if (optional.isPresent()) {
+                laptop = optional.get();
+                for (LaptopQuantityEntry entry : cartLaptopEntries) {
+                    if (laptop.equals(entry.getLaptop())) {
+                        int quantity = entry.getQuantity();
+                        entry.setQuantity(quantity > 1 ? quantity - 1 : 1);
                     }
                 }
             }
