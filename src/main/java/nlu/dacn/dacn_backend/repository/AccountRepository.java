@@ -16,7 +16,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Query(value = "SELECT MAX(id) FROM account", nativeQuery = true)
     Long findMaxId();
-    Optional<Account> findByEmailAndLoginType(String email,LoginType loginType);
 
     Optional<Account> findByEmailAndLoginType(String email, LoginType loginType);
 
