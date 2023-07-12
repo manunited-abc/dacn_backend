@@ -18,4 +18,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     Long findMaxId();
     Optional<Account> findByEmailAndLoginType(String email,LoginType loginType);
 
+    Optional<Account> findByEmailAndLoginType(String email, LoginType loginType);
+
 }

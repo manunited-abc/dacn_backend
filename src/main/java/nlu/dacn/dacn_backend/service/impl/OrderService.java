@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import nlu.dacn.dacn_backend.converter.LaptopConverter;
 import nlu.dacn.dacn_backend.dto.request.LaptopDTO;
 import nlu.dacn.dacn_backend.dto.response.OrderResponse;
-import nlu.dacn.dacn_backend.entity.Account;
-import nlu.dacn.dacn_backend.entity.Cart;
-import nlu.dacn.dacn_backend.entity.Laptop;
-import nlu.dacn.dacn_backend.entity.OrderTest;
+import nlu.dacn.dacn_backend.entity.*;
 import nlu.dacn.dacn_backend.enumv1.OrderStatus;
 import nlu.dacn.dacn_backend.exception.ServiceException;
 import nlu.dacn.dacn_backend.repository.AccountRepository;
@@ -36,7 +33,7 @@ public class OrderService implements IOrderService {
         }
         OrderTest order = new OrderTest();
         order.setAccount(account);
-        order.setOrderedLaptops(new HashMap<>(cart.getCartLaptop()));
+        order.setOrderLaptops(new ArrayList<>(cart.getCartLaptop()));
         order.setOrderStatus(OrderStatus.PENDING);
         cart.clearItems();
         account.getOrderTests().add(order);
@@ -113,9 +110,9 @@ public class OrderService implements IOrderService {
         orderResponse.setAddressDetail(order.getAccount().getAddressDetail());
 
         LaptopDTO laptopDTO;
-        for (Map.Entry<Laptop, Integer> entry : order.getOrderedLaptops().entrySet()) {
-            laptopDTO = laptopConverter.toLaptopDTO(entry.getKey());
-            laptopDTO.setQuantity(entry.getValue());
+        for(LaptopQuantityEntry entry: order.getOrderLaptops()) {
+            laptopDTO = laptopConverter.toLaptopDTO(entry.getLaptop());
+            laptopDTO.setQuantity(entry.getQuantity());
             orderResponse.getLaptopDTOS().add(laptopDTO);
         }
         return orderResponse;
