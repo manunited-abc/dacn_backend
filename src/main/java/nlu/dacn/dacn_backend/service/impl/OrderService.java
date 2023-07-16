@@ -25,7 +25,7 @@ public class OrderService implements IOrderService {
 
 
     @Override
-    public void orderLaptop(String token) {
+    public OrderResponse orderLaptop(String token,OrderStatus status) {
         Account account = getAccountFromToken(token);
         Cart cart = account.getCart();
         if (cart.getCartLaptop().isEmpty()) {
@@ -34,10 +34,16 @@ public class OrderService implements IOrderService {
         OrderTest order = new OrderTest();
         order.setAccount(account);
         order.setOrderLaptops(new ArrayList<>(cart.getCartLaptop()));
-        order.setOrderStatus(OrderStatus.PENDING);
+        order.setOrderStatus(status);
         cart.clearItems();
         account.getOrderTests().add(order);
         accountRepository.save(account);
+
+        List<OrderTest> orderTestList = account.getOrderTests();
+        order = orderTestList.get(orderTestList.size() -1);
+        OrderResponse ores = toOrderResponse(order);
+
+        return ores;
     }
 
     @Override
@@ -59,6 +65,19 @@ public class OrderService implements IOrderService {
         }
         List<OrderResponse> orderResponseList = new ArrayList<>();
         List<OrderTest> orders = account.getOrderTests();
+
+        //Nếu đơn hàng đang được chờ thanh toán vnpay thì bỏ qua
+//        for (OrderTest order : orders) {
+//            if (order.getOrderStatus() == OrderStatus.PAYWAITING) {
+//                orders.remove(order);
+//            }
+//        }
+        for (int i = orders.size() -1 ; i >= 0; i--) {
+            OrderTest order = orders.get(i);
+            if (order.getOrderStatus() == OrderStatus.PAYWAITING) {
+                orders.remove(order);
+            }
+        }
 
         OrderResponse orderResponse;
         for (OrderTest order : orders) {

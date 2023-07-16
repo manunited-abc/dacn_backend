@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public interface IOrderService {
-    void orderLaptop(String token);
+    OrderResponse orderLaptop(String token,OrderStatus status);
     OrderResponse getOrder(String token, Long orderId);
     List<OrderResponse> getOrders(String token);
     OrderResponse updateOrderStatus(String token, Long orderId, OrderStatus orderStatus);
