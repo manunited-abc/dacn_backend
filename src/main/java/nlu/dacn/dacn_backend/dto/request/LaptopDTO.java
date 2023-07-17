@@ -34,7 +34,7 @@ public class LaptopDTO extends AbstractDTO<LaptopDTO> {
     private String color;
     private String battery;
     private String weight;
-    private LaptopState laptopState;
+//    private LaptopState laptopState;
     private List<String> listImages = new ArrayList<>();
     @Min(value = 1, message = "Số lượng nhập phải lớn hơn 0")
     private int quantity;
@@ -42,4 +42,5 @@ public class LaptopDTO extends AbstractDTO<LaptopDTO> {
     private String type;
     @NotNull
     private String linkAvatar;
+    private String urlSeo;
 }
