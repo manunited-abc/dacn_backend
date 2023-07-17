@@ -6,6 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum OrderStatus {
+    PAYWAITING("Đang chờ thanh toán"),
     PENDING("Đang chờ"),
     PROCESSING("Đang xử lý"),
     SHIPPED("Đã gửi hàng"),
