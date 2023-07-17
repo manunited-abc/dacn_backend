@@ -1,5 +1,6 @@
 package nlu.dacn.dacn_backend.controller;
 
+import lombok.SneakyThrows;
 import nlu.dacn.dacn_backend.dto.request.LoginFacebookRequest;
 import nlu.dacn.dacn_backend.dto.request.LoginForm;
 import nlu.dacn.dacn_backend.dto.request.LoginGoogleRequest;
@@ -42,6 +43,7 @@ public class LoginController {
     private FacebookApiService facebookApiService;
 
     @PostMapping("auth/login")
+    @SneakyThrows
     public ResponseEntity<?> handleLogin(@Valid @RequestBody LoginForm loginForm) {
         return ResponseEntity.ok(accountService.login(loginForm.getUsername(), loginForm.getPassword()));
     }

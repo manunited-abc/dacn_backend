@@ -4,6 +4,7 @@ import nlu.dacn.dacn_backend.entity.Laptop;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -14,7 +15,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class LaptopFilterRepository {
@@ -45,6 +48,7 @@ public class LaptopFilterRepository {
         if (!predicates.isEmpty()) {
             criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()]));
         }
+
 
 //      TypedQuery<Laptop> được tạo từ entityManager và câu truy vấn criteriaQuery.
         TypedQuery<Laptop> typedQuery = entityManager.createQuery(criteriaQuery);

@@ -32,6 +32,7 @@ public class Laptop extends BaseEntity {
     private LaptopState laptopState;
     private int quantity;
     private String linkAvatar;
+    private String urlSeo;
     @JsonIgnore
     @OneToMany(mappedBy = "laptop", cascade = CascadeType.ALL)
     private List<ImageLaptop> images = new ArrayList<>();

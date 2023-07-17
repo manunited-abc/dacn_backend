@@ -14,6 +14,7 @@ import nlu.dacn.dacn_backend.enumv1.LoginType;
 import nlu.dacn.dacn_backend.enumv1.RoleType;
 import nlu.dacn.dacn_backend.enumv1.State;
 import nlu.dacn.dacn_backend.evenlistener.AccountCreatedEvent;
+import nlu.dacn.dacn_backend.exception.NotFoundException;
 import nlu.dacn.dacn_backend.exception.ServiceException;
 import nlu.dacn.dacn_backend.mail.GMailer;
 import nlu.dacn.dacn_backend.repository.AccountRepository;
@@ -50,8 +51,6 @@ public class AccountService implements IAccountService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final Map<String, String> tokenLoginMap = new HashMap<>();
-
-
     private final RoleService roleService;
     private final ApplicationContext applicationContext;
     private final AccountConverter accountConverter;
@@ -66,42 +65,43 @@ public class AccountService implements IAccountService {
 
     @Override
     public JwtResponse login(String username, String password) {
-        // Kiểm tra tài khoản có đúng trạng thái hay không
-        validateAccount(username);
-        // Xác thực username và password
-        Authentication authenticate;
-        try {
-            authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (Exception e) {
-            throw new ServiceException(HttpStatus.NOT_FOUND, "Sai mật khẩu, vui lòng thử lại");
-        }
-        // Nếu không xảy ra exception tức là thông tin hợp lệ
-        // Set thông tin authentication vào Security Context
 
-        String tokenUser = tokenLoginMap.get(username);
-        if (tokenUser == null || !jwtTokenProvider.validateToken(tokenUser)) {
-            tokenUser = jwtTokenProvider.generateToken(authenticate);
-            tokenLoginMap.put(username, tokenUser);
-        }
-        SecurityContextHolder.getContext().setAuthentication(authenticate);
-        UserPrinciple userPrinciple = (UserPrinciple) authenticate.getPrincipal();
-        return new JwtResponse(tokenUser, userPrinciple.getUsername(), userPrinciple.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+            // Kiểm tra tài khoản có đúng trạng thái hay không
+            validateAccount(username);
+            // Xác thực username và password
+            Authentication authenticate;
+            try {
+                authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            } catch (Exception e) {
+                throw new RuntimeException("Sai mật khẩu, vui lòng thử lại");
+            }
+            // Nếu không xảy ra exception tức là thông tin hợp lệ
+            // Set thông tin authentication vào Security Context
+
+            String tokenUser = tokenLoginMap.get(username);
+            if (tokenUser == null || !jwtTokenProvider.validateToken(tokenUser)) {
+                tokenUser = jwtTokenProvider.generateToken(authenticate);
+                tokenLoginMap.put(username, tokenUser);
+            }
+            SecurityContextHolder.getContext().setAuthentication(authenticate);
+            UserPrinciple userPrinciple = (UserPrinciple) authenticate.getPrincipal();
+            return new JwtResponse(tokenUser, userPrinciple.getUsername(), userPrinciple.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
     }
 
     private void validateAccount(String username) {
         Optional<Account> optionalAccount = accountRepository.findByUserName(username);
         if (optionalAccount.isEmpty()) {
-            throw new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy tài khoản");
+            throw new RuntimeException("Không tìm thấy tài khoản");
         }
         Account account = optionalAccount.get();
         if (account.getState() == State.PENDING) {
-            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Tài khoản chưa được kích hoạt");
+            throw new RuntimeException("Tài khoản chưa được kích hoạt");
         }
         if (account.getState() == State.DISABLED) {
-            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Tài khoản đã bị khóa");
+            throw new RuntimeException("Tài khoản đã bị khoá");
         }
         if (account.getState() == State.REMOVED) {
-            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Tài khoản đã bị xóa");
+            throw new RuntimeException("Tài khoản đã bị xoá");
         }
     }
 

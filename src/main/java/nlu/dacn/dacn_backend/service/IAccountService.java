@@ -5,13 +5,14 @@ import nlu.dacn.dacn_backend.dto.request.LoginFacebookRequest;
 import nlu.dacn.dacn_backend.dto.request.LoginGoogleRequest;
 import nlu.dacn.dacn_backend.dto.response.JwtResponse;
 import nlu.dacn.dacn_backend.entity.Account;
+import nlu.dacn.dacn_backend.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 public interface IAccountService {
-    JwtResponse login(String username, String password);
+    JwtResponse login(String username, String password) ;
 
 
     void sendCodeToEmail(String host, String token);
