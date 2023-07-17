@@ -231,3 +231,6 @@ INSERT INTO `party` (`id`, `create_by`, `created_date`, `modified_by`, `modified
                                                                                                                       (21, NULL, '2023-07-15 16:27:18.000000', NULL, '2023-07-15 16:27:18.000000', 'Intel Core i7', 'ACTIVE', 'CPU'),
                                                                                                                       (22, NULL, '2023-07-15 16:27:18.000000', NULL, '2023-07-15 16:27:18.000000', 'AMD', 'ACTIVE', 'CPU'),
                                                                                                                       (23, NULL, '2023-07-15 16:27:18.000000', NULL, '2023-07-15 16:27:18.000000', 'Apple M1', 'ACTIVE', 'CPU');
+ALTER TABLE laptop ADD FULLTEXT(product_name);
+ALTER TABLE laptop ADD FULLTEXT(type);
+ALTER TABLE laptop ADD FULLTEXT(color);
