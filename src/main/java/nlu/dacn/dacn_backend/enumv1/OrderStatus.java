@@ -11,6 +11,7 @@ public enum OrderStatus {
     PROCESSING("Đang xử lý"),
     SHIPPED("Đã gửi hàng"),
     DELIVERED("Đã giao hàng"),
+    RETURNED("Đã trả hàng"),
     CANCELLED("Đã hủy");
 
     private final String description;

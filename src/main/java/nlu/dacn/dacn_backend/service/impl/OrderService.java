@@ -101,8 +101,12 @@ public class OrderService implements IOrderService {
                 if (order.getOrderStatus() == OrderStatus.DELIVERED) {
                     throw new ServiceException("Đơn hàng đã giao, không thể cập nhật");
                 }
+                if (order.getOrderStatus() == OrderStatus.RETURNED) {
+                    throw new ServiceException("Đơn hàng đã hoàn trả, không thể cập nhật");
+                }
                 order.setOrderStatus(orderStatus);
                 orderResponse = toOrderResponse(order);
+                orderResponse.setUpdated(true);
             }
         }
         accountRepository.save(account);
