@@ -37,6 +37,15 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    // Tạo ra jwt từ thông tin user với thời gian 2 phút
+    public String generateTokenInDay(String username) {
+        return Jwts.builder().setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + JWT_EXPIRATION * 1000))
+                .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+                .compact();
+    }
+
     //  Kiểm tra token có hợp lệ hay không
     public boolean validateToken(String authToken) {
         try {
