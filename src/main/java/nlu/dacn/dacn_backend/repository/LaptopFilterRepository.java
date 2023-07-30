@@ -10,10 +10,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -28,10 +25,12 @@ public class LaptopFilterRepository {
 //      tạo CriteriaBuilder từ entityManager để xây dựng các truy vấn Criteria API.
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Laptop> criteriaQuery = criteriaBuilder.createQuery(Laptop.class);
+
         Root<Laptop> root = criteriaQuery.from(Laptop.class);
 //      criteriaQuery.select(root) được sử dụng để chọn tất cả các cột trong bảng Laptop.
         criteriaQuery.select(root);
-
+        //Sort by create date desc
+        criteriaQuery.orderBy(criteriaBuilder.desc(root.get("createdDate")));
 //      tạo danh sách các Predicate (điều kiện) để xác định các tiêu chí tìm kiếm.
         List<Predicate> predicates = new ArrayList<>();
         if (!types.isEmpty()) {

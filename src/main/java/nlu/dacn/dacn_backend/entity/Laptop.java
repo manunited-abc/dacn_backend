@@ -38,6 +38,5 @@ public class Laptop extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "laptop", cascade = CascadeType.ALL)
     private List<ImageLaptop> images = new ArrayList<>();
-    @OneToMany(mappedBy = "product")
-    private List<Inventory> inventories;
+
 }

@@ -7,15 +7,15 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-@Entity
-@Table
-@Getter
-@Setter
-@Deprecated
-public class Inventory extends BaseEntity{
-    private int quantity;
-    private double unitPrice;
-    @ManyToOne
-    private Laptop laptop;
-
-}
+//@Entity
+//@Table
+//@Getter
+//@Setter
+//@Deprecated
+//public class Inventory extends BaseEntity{
+//    private int quantity;
+//    private double unitPrice;
+//    @ManyToOne
+//    private Laptop laptop;
+//
+//}
