@@ -8,6 +8,7 @@ import nlu.dacn.dacn_backend.entity.Account;
 import nlu.dacn.dacn_backend.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,4 +34,5 @@ public interface IAccountService {
     JwtResponse loginGoogle(LoginGoogleRequest loginGoogleRequest);
 
     JwtResponse loginFacebook(LoginFacebookRequest loginFacebookRequest);
+    List<Account> findAllAccount();
 }

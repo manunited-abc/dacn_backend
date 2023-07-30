@@ -369,6 +369,11 @@ public class AccountService implements IAccountService {
                 .collect(Collectors.toList()));
     }
 
+    @Override
+    public List<Account> findAllAccount() {
+        return accountRepository.findAll();
+    }
+
     // Tạo username cho tài khoản google và facebook
     private String createNewUserName() {
         return "user" + (accountRepository.findMaxId() + 1);

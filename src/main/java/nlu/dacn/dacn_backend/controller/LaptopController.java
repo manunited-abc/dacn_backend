@@ -10,6 +10,7 @@ import nlu.dacn.dacn_backend.model.response.LaptopOutput;
 import nlu.dacn.dacn_backend.service.impl.LaptopService;
 import nlu.dacn.dacn_backend.utils.JsonUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -89,5 +90,10 @@ public class LaptopController {
     public LaptopDTO updateLaptop(@RequestBody LaptopDTO laptopDTO, @PathVariable("id") long id) {
         laptopDTO.setId(id);
         return laptopService.updateLaptop(laptopDTO);
+    }
+    @PutMapping("/laptop/update-quantity/{id}/{newQuantity}")
+    public ResponseEntity<?> updateLaptop(@PathVariable("id") long id, @PathVariable("newQuantity") int newQuantity) {
+        laptopService.updateQuantity(id,newQuantity);
+        return ResponseEntity.ok("Cập nhật thành công");
     }
 }

@@ -278,6 +278,16 @@ public class LaptopService extends BaseService implements ILaptopService {
         }
         return result;
     }
-
-
+    public void updateQuantity(Long id,int newQuantity){
+         Optional<Laptop> optional = laptopRepository.findById(id);
+        if(optional==null){
+            throw new RuntimeException("Không tìm thấy laptop");
+        }
+        Laptop laptopUpdate = optional.get();
+        laptopUpdate.setQuantity(newQuantity);
+        laptopRepository.save(laptopUpdate);
+    }
+    public int getQuantity(Long id){
+        return laptopRepository.getQuantityById(id);
+    }
 }

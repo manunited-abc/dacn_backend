@@ -41,4 +41,6 @@ public interface LaptopRepository extends JpaRepository<Laptop, Long> {
     List<Laptop> findByGraphics(@Param("keyword") String keyword);
     @Query(value = "SELECT * FROM laptop WHERE MATCH (color) AGAINST (:keyword)", nativeQuery = true)
     List<Laptop> findByColor(@Param("keyword") String keyword);
+    @Query("SELECT l.quantity FROM Laptop l WHERE l.id = (:id)")
+    int getQuantityById(@Param("id") Long id);
 }

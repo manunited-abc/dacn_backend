@@ -33,7 +33,11 @@ public class Laptop extends BaseEntity {
     private int quantity;
     private String linkAvatar;
     private String urlSeo;
+    private double costPrice;
+    private int qua;
     @JsonIgnore
     @OneToMany(mappedBy = "laptop", cascade = CascadeType.ALL)
     private List<ImageLaptop> images = new ArrayList<>();
+    @OneToMany(mappedBy = "product")
+    private List<Inventory> inventories;
 }
