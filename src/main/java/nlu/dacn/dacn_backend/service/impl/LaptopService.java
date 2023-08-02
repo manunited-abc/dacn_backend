@@ -90,5 +90,20 @@ public class LaptopService implements ILaptopService {
         return result;
     }
 
+    @Override
+    public void deleteLaptop(Long... ids) {
+        if (ids != null && ids.length > 0) {
+            for (Long id : ids) {
+                Optional<Laptop> laptopOptional = laptopRepository.findById(id);
+                if (laptopOptional.isPresent()) {
+                    laptopRepository.delete(laptopOptional.get());
+                }
+                else throw new ServiceException(HttpStatus.NOT_FOUND, "Id laptop không tồn tại");
+            }
+        } else {
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Chưa có id laptop");
+        }
+    }
+
 
 }

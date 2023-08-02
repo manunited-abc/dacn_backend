@@ -3,11 +3,14 @@ package nlu.dacn.dacn_backend.controller;
 import lombok.RequiredArgsConstructor;
 import nlu.dacn.dacn_backend.dto.request.LaptopDTO;
 import nlu.dacn.dacn_backend.dto.response.ImageModel;
+import nlu.dacn.dacn_backend.dto.response.ResponMessenger;
 import nlu.dacn.dacn_backend.entity.Laptop;
 import nlu.dacn.dacn_backend.model.request.LaptopFilter;
 import nlu.dacn.dacn_backend.model.response.LaptopOutput;
 import nlu.dacn.dacn_backend.service.impl.LaptopService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -66,5 +69,11 @@ public class LaptopController {
     @GetMapping("/laptop/product_name")
     public List<LaptopDTO> searchLaptopByProductName(@RequestParam("productName") String productName) {
         return laptopService.getLaptopByProductName(productName);
+    }
+
+    @DeleteMapping("/laptop")
+    public ResponseEntity<?> deleteLaptop(@RequestBody Long... ids) {
+        laptopService.deleteLaptop(ids);
+        return new ResponseEntity<>(new ResponMessenger("Xóa laptop thành công"), HttpStatus.OK);
     }
 }

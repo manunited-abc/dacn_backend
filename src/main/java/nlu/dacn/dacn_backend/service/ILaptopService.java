@@ -22,4 +22,6 @@ public interface ILaptopService {
 
     List<String> getAllChipCpu();
     List<LaptopDTO> getLaptopByProductName(String key);
+
+    void deleteLaptop(Long... ids);
 }
