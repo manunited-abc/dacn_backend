@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import nlu.dacn.dacn_backend.dto.request.LaptopDTO;
 import nlu.dacn.dacn_backend.dto.response.ImageModel;
+import nlu.dacn.dacn_backend.dto.response.ResponMessenger;
 import nlu.dacn.dacn_backend.entity.Laptop;
 import nlu.dacn.dacn_backend.model.request.LaptopFilter;
 import nlu.dacn.dacn_backend.model.response.LaptopOutput;
 import nlu.dacn.dacn_backend.service.impl.LaptopService;
 import nlu.dacn.dacn_backend.utils.JsonUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -95,5 +97,11 @@ public class LaptopController {
     public ResponseEntity<?> updateLaptop(@PathVariable("id") long id, @PathVariable("newQuantity") int newQuantity) {
         laptopService.updateQuantity(id,newQuantity);
         return ResponseEntity.ok("Cập nhật thành công");
+    }
+
+    @DeleteMapping("/laptop")
+    public ResponseEntity<?> deleteLaptop(@RequestBody Long... ids) {
+        laptopService.deleteLaptop(ids);
+        return new ResponseEntity<>(new ResponMessenger("Xóa laptop thành công"), HttpStatus.OK);
     }
 }
