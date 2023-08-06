@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -71,6 +72,10 @@ public class AccountController {
     public Account getAccount(@RequestHeader("Authorization") String authHeader) {
         String token = TokenUtils.getTokenFromHeader(authHeader);
         return accountService.findByUserName(token).get();
+    }
+    @GetMapping("/account/list")
+    public List<Account> getAccounts() {
+        return accountService.findAllAccount();
     }
 
 

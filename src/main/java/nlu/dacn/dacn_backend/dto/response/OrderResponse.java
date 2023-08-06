@@ -14,6 +14,7 @@ public class OrderResponse {
     private Long id;
     private String status;
     private Date orderDate;
+    private int quantity;
     private List<LaptopDTO> laptopDTOS = new ArrayList<>();
     private double totalPayment = 0;
     private String addressDetail;

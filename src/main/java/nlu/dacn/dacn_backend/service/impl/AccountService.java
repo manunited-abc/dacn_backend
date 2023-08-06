@@ -313,7 +313,7 @@ public class AccountService implements IAccountService {
                 String tokenUser = tokenLoginMap.get(username);
                 if (tokenUser == null || !jwtTokenProvider.validateToken(tokenUser)) {
 
-                    tokenUser = jwtTokenProvider.generateToken(username);
+                    tokenUser = jwtTokenProvider.generateTokenInDay(username);
                     tokenLoginMap.put(username, tokenUser);
                 }
                 JwtResponse result = new JwtResponse(tokenUser, username, loginAcount.getRoles().stream()
@@ -359,14 +359,19 @@ public class AccountService implements IAccountService {
         }
 
         username = account.getUserName();
-        String tokenUser = jwtTokenProvider.generateToken(username);
+        String tokenUser = jwtTokenProvider.generateTokenInDay(username);
         if (tokenUser == null || !jwtTokenProvider.validateToken(tokenUser)) {
-            tokenUser = jwtTokenProvider.generateToken(username);
+            tokenUser = jwtTokenProvider.generateTokenInDay(username);
             tokenLoginMap.put(username, tokenUser);
         }
         return new JwtResponse(tokenUser, username, account.getRoles().stream()
                 .map(Role::getCode)
                 .collect(Collectors.toList()));
+    }
+
+    @Override
+    public List<Account> findAllAccount() {
+        return accountRepository.findAll();
     }
 
     // Tạo username cho tài khoản google và facebook

@@ -3,9 +3,12 @@ package nlu.dacn.dacn_backend.service.impl;
 import lombok.RequiredArgsConstructor;
 import nlu.dacn.dacn_backend.config.PaymentConfig;
 import nlu.dacn.dacn_backend.converter.LaptopConverter;
+import nlu.dacn.dacn_backend.dto.response.OrderResponse;
 import nlu.dacn.dacn_backend.entity.Account;
+import nlu.dacn.dacn_backend.entity.Cart;
 import nlu.dacn.dacn_backend.entity.OrderTest;
 import nlu.dacn.dacn_backend.enumv1.OrderStatus;
+import nlu.dacn.dacn_backend.enumv1.PaymentMethod;
 import nlu.dacn.dacn_backend.exception.ServiceException;
 import nlu.dacn.dacn_backend.repository.AccountRepository;
 import nlu.dacn.dacn_backend.repository.OrderRepository;
@@ -27,6 +30,28 @@ public class VnPayService implements IVnpayService {
     private final LaptopConverter laptopConverter;
     private final AccountRepository accountRepository;
     private final OrderRepository orderRepository;
+
+    @Override
+    public OrderResponse orderLaptop(String token) {
+        Account account = orderService.getAccountFromToken(token);
+        Cart cart = account.getCart();
+        if (cart.getCartLaptop().isEmpty()) {
+            throw new ServiceException("Giỏ hàng trống, vui lòng thêm đơn hàng trước khi đặt");
+        }
+        OrderTest order = new OrderTest();
+        order.setAccount(account);
+        order.setOrderLaptops(new ArrayList<>(cart.getCartLaptop()));
+        order.setOrderStatus(OrderStatus.PAYWAITING);
+        order.setPaymentMethod(PaymentMethod.VNPAY);
+        account.getOrderTests().add(order);
+        accountRepository.save(account);
+
+        List<OrderTest> orderTestList = account.getOrderTests();
+        order = orderTestList.get(orderTestList.size() -1);
+        OrderResponse ores = orderService.toOrderResponse(order);
+
+        return ores;
+    }
 
     @Override
     public String generateSanboxLink(String token,double price,Long orderId) throws UnsupportedEncodingException {
@@ -108,6 +133,7 @@ public class VnPayService implements IVnpayService {
             throw new ServiceException("Không tìm thấy tài khoản");
         }
         Account account = optionalAccount.get();
+        Cart cart = account.getCart();
 
         Optional<OrderTest> orderTestOptional = orderRepository.findById(Long.valueOf(txnRef));
         if (orderTestOptional.isEmpty()){
@@ -120,7 +146,8 @@ public class VnPayService implements IVnpayService {
         }
 
         orderService.updateOrderStatus(token, Long.valueOf(txnRef), OrderStatus.PENDING);
-
+        cart.clearItems();
+        accountRepository.save(account);
         return "Giao dịch mã đơn " + txnRef + " đã thanh toán thành công";
     }
 }

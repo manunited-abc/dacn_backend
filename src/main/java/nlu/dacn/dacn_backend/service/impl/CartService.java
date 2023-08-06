@@ -78,6 +78,9 @@ public class CartService implements ICartService {
         if (laptopOptional.get().getQuantity() < 1) {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Sản phẩm đã hết hàng");
         }
+        if (laptopOptional.get().getQuantity() < quantity) {
+            throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Số lượng vượt quá số lượng sản phầm hiện có");
+        }
 
         Account account = accountOptional.get();
         Laptop laptop = laptopOptional.get();
