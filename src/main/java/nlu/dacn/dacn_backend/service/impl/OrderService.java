@@ -23,6 +23,7 @@ public class OrderService implements IOrderService {
     private final LaptopConverter laptopConverter;
     private final AccountRepository accountRepository;
     private final OrderRepository orderRepository;
+    private final LaptopService laptopService;
 
 
     @Override
@@ -32,11 +33,21 @@ public class OrderService implements IOrderService {
         if (cart.getCartLaptop().isEmpty()) {
             throw new ServiceException("Giỏ hàng trống, vui lòng thêm đơn hàng trước khi đặt");
         }
+
         OrderTest order = new OrderTest();
         order.setAccount(account);
         order.setOrderLaptops(new ArrayList<>(cart.getCartLaptop()));
         order.setOrderStatus(OrderStatus.PENDING);
         order.setPaymentMethod(PaymentMethod.COD);
+
+        //Update quantity of laptop
+        for(LaptopQuantityEntry laptopQuantityEntry: cart.getCartLaptop()){
+            int oldQuantity = laptopService.getQuantity(laptopQuantityEntry.getLaptop().getId());
+            if(oldQuantity<laptopQuantityEntry.getQuantity()){
+                throw new ServiceException("Số lượng vượt quá số lượng sản phẩm hiện có");
+            }
+            laptopService.updateQuantity(laptopQuantityEntry.getLaptop().getId(),oldQuantity - laptopQuantityEntry.getQuantity());
+        }
         cart.clearItems();
         account.getOrderTests().add(order);
         accountRepository.save(account);

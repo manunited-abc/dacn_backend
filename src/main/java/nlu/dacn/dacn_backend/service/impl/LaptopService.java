@@ -221,6 +221,7 @@ public class LaptopService extends BaseService implements ILaptopService {
                 if (laptopOptional.isPresent()) {
                     laptopRepository.delete(laptopOptional.get());
                 }
+                else throw new ServiceException(HttpStatus.NOT_FOUND, "Id laptop không tồn tại");
             }
         } else {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, "Chưa có id laptop");
