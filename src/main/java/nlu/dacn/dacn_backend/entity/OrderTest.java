@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import nlu.dacn.dacn_backend.enumv1.OrderStatus;
+import nlu.dacn.dacn_backend.enumv1.PaymentMethod;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ public class OrderTest extends BaseEntity {
     private Account account;
 
     private OrderStatus orderStatus;
+
+    private PaymentMethod paymentMethod;
 
     @ElementCollection
     @CollectionTable(name = "order_laptop", joinColumns = @JoinColumn(name = "order_id"))

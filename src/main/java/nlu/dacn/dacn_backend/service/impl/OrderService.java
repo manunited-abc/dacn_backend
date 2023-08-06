@@ -6,6 +6,7 @@ import nlu.dacn.dacn_backend.dto.request.LaptopDTO;
 import nlu.dacn.dacn_backend.dto.response.OrderResponse;
 import nlu.dacn.dacn_backend.entity.*;
 import nlu.dacn.dacn_backend.enumv1.OrderStatus;
+import nlu.dacn.dacn_backend.enumv1.PaymentMethod;
 import nlu.dacn.dacn_backend.exception.ServiceException;
 import nlu.dacn.dacn_backend.repository.AccountRepository;
 import nlu.dacn.dacn_backend.repository.OrderRepository;
@@ -26,7 +27,7 @@ public class OrderService implements IOrderService {
 
 
     @Override
-    public OrderResponse orderLaptop(String token,OrderStatus status) {
+    public OrderResponse orderLaptop(String token) {
         Account account = getAccountFromToken(token);
         Cart cart = account.getCart();
         if (cart.getCartLaptop().isEmpty()) {
@@ -36,8 +37,8 @@ public class OrderService implements IOrderService {
         OrderTest order = new OrderTest();
         order.setAccount(account);
         order.setOrderLaptops(new ArrayList<>(cart.getCartLaptop()));
-
-        order.setOrderStatus(status);
+        order.setOrderStatus(OrderStatus.PENDING);
+        order.setPaymentMethod(PaymentMethod.COD);
 
         //Update quantity of laptop
         for(LaptopQuantityEntry laptopQuantityEntry: cart.getCartLaptop()){
@@ -125,7 +126,7 @@ public class OrderService implements IOrderService {
         return orderResponse;
     }
 
-    private Account getAccountFromToken(String token) {
+    public Account getAccountFromToken(String token) {
         if (!jwtTokenProvider.validateToken(token)) {
             throw new ServiceException("Hết phiên làm việc, vui lòng đăng nhập lại");
         }
@@ -137,7 +138,7 @@ public class OrderService implements IOrderService {
         return optionalAccount.get();
     }
 
-    private OrderResponse toOrderResponse(OrderTest order) {
+    public OrderResponse toOrderResponse(OrderTest order) {
         OrderResponse orderResponse = new OrderResponse();
         orderResponse.setId(order.getId());
         orderResponse.setOrderDate(order.getCreatedDate());

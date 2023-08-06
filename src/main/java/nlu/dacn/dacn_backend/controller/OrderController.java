@@ -5,6 +5,7 @@ import nlu.dacn.dacn_backend.dto.request.OrderDTO;
 import nlu.dacn.dacn_backend.dto.response.OrderResponse;
 import nlu.dacn.dacn_backend.dto.response.ResponMessenger;
 import nlu.dacn.dacn_backend.enumv1.OrderStatus;
+import nlu.dacn.dacn_backend.enumv1.PaymentMethod;
 import nlu.dacn.dacn_backend.exception.ServiceException;
 import nlu.dacn.dacn_backend.service.IVnpayService;
 import nlu.dacn.dacn_backend.service.impl.OrderService;
@@ -28,7 +29,7 @@ public class OrderController {
     @PostMapping("/order")
     public ResponseEntity<?> addLaptopToCart(@RequestHeader("Authorization") String authHeader) {
         String token = TokenUtils.getTokenFromHeader(authHeader);
-        orderService.orderLaptop(token, OrderStatus.PENDING);
+        orderService.orderLaptop(token);
         return new ResponseEntity<>(new ResponMessenger("Đã đặt đơn hàng"), HttpStatus.OK);
     }
 
@@ -55,7 +56,7 @@ public class OrderController {
     public ResponseEntity<?> vnpayOrder(@RequestHeader("Authorization") String authHeader) {
         try {
             String token = TokenUtils.getTokenFromHeader(authHeader);
-            OrderResponse orderResponse = orderService.orderLaptop(token, OrderStatus.PAYWAITING);
+            OrderResponse orderResponse = vnpayService.orderLaptop(token);
             String urlpayment = vnpayService.generateSanboxLink(token, orderResponse.getTotalPayment(), orderResponse.getId());
             return new ResponseEntity<String>(urlpayment, HttpStatus.OK);
         } catch (UnsupportedEncodingException e) {
