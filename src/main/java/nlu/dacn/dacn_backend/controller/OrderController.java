@@ -86,4 +86,10 @@ public class OrderController {
         return new ResponseEntity<String>(updatemessage,HttpStatus.OK);
     }
 
+    @GetMapping("/order/listforadmin")
+    public List<OrderResponse> getOrdersForAdmin(@RequestHeader("Authorization") String authHeader) {
+        String token = TokenUtils.getTokenFromHeader(authHeader);
+        return orderService.getAllOrderForAdmin(token);
+    }
+
 }

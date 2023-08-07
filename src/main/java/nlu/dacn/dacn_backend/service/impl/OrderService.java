@@ -10,6 +10,7 @@ import nlu.dacn.dacn_backend.enumv1.PaymentMethod;
 import nlu.dacn.dacn_backend.exception.ServiceException;
 import nlu.dacn.dacn_backend.repository.AccountRepository;
 import nlu.dacn.dacn_backend.repository.OrderRepository;
+import nlu.dacn.dacn_backend.repository.OrderTestRepository;
 import nlu.dacn.dacn_backend.security.jwt.JwtTokenProvider;
 import nlu.dacn.dacn_backend.service.IOrderService;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,8 @@ public class OrderService implements IOrderService {
     private final AccountRepository accountRepository;
     private final OrderRepository orderRepository;
     private final LaptopService laptopService;
+
+    private final OrderTestRepository orderTestRepository;
 
 
     @Override
@@ -77,7 +80,41 @@ public class OrderService implements IOrderService {
             throw new ServiceException("Tài khoản của bạn chưa có đơn hàng nào");
         }
         List<OrderResponse> orderResponseList = new ArrayList<>();
+
         List<OrderTest> orders = account.getOrderTests();
+
+        //Nếu đơn hàng đang được chờ thanh toán vnpay thì bỏ qua
+//        for (OrderTest order : orders) {
+//            if (order.getOrderStatus() == OrderStatus.PAYWAITING) {
+//                orders.remove(order);
+//            }
+//        }
+        for (int i = orders.size() -1 ; i >= 0; i--) {
+            OrderTest order = orders.get(i);
+            if (order.getOrderStatus() == OrderStatus.PAYWAITING) {
+                orders.remove(order);
+            }
+        }
+
+        OrderResponse orderResponse;
+        for (OrderTest order : orders) {
+            orderResponse = toOrderResponse(order);
+            orderResponseList.add(orderResponse);
+        }
+
+        Collections.reverse(orderResponseList);
+        return orderResponseList;
+    }
+
+    @Override
+    public List<OrderResponse> getAllOrderForAdmin(String token) {
+        Account account = getAccountFromToken(token);
+        if (account.getOrderTests().isEmpty()) {
+            throw new ServiceException("Tài khoản của bạn chưa có đơn hàng nào");
+        }
+        List<OrderResponse> orderResponseList = new ArrayList<>();
+
+        List<OrderTest> orders = orderTestRepository.findAll();
 
         //Nếu đơn hàng đang được chờ thanh toán vnpay thì bỏ qua
 //        for (OrderTest order : orders) {
