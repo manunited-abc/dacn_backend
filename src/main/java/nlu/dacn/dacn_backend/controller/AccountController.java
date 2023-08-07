@@ -52,8 +52,7 @@ public class AccountController {
     }
 
     @PostMapping("/account/reset-password")
-    public ResponseEntity<?> processResetPassword(@RequestParam("password") String password, @RequestHeader("Authorization") String authHeader) {
-        String token = TokenUtils.getTokenFromHeader(authHeader);
+    public ResponseEntity<?> processResetPassword(@RequestParam("password") String password, @RequestParam("token") String token) {
         accountService.processResetPassword(token, password);
         return new ResponseEntity<>(new ResponMessenger("Thay đổi mật khẩu thành công"), HttpStatus.OK);
     }
