@@ -12,4 +12,6 @@ public interface IOrderService {
     OrderResponse getOrder(String token, Long orderId);
     List<OrderResponse> getOrders(String token);
     OrderResponse updateOrderStatus(String token, Long orderId, OrderStatus orderStatus);
+
+    List<OrderResponse>  getAllOrderForAdmin(String token);
 }
