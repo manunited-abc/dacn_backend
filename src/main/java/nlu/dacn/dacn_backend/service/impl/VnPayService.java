@@ -145,7 +145,7 @@ public class VnPayService implements IVnpayService {
             return "Giao dịch mã đơn " + txnRef + " đã được huỷ";
         }
 
-        orderService.updateOrderStatus(token, Long.valueOf(txnRef), OrderStatus.PENDING);
+        orderService.updateOrderStatus(token, Long.valueOf(txnRef), OrderStatus.SHIPPED);
         cart.clearItems();
         accountRepository.save(account);
         return "Giao dịch mã đơn " + txnRef + " đã thanh toán thành công";
