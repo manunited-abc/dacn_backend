@@ -100,6 +100,9 @@ public class OrderService implements IOrderService {
         for (OrderTest order : orders) {
             orderResponse = toOrderResponse(order);
             orderResponseList.add(orderResponse);
+            if(isUpdateOrderStatus(order)) {
+                orderResponse.setUpdated(true);
+            }
         }
 
         Collections.reverse(orderResponseList);
@@ -133,6 +136,9 @@ public class OrderService implements IOrderService {
         for (OrderTest order : orders) {
             orderResponse = toOrderResponse(order);
             orderResponseList.add(orderResponse);
+            if(isUpdateOrderStatus(order)) {
+                orderResponse.setUpdated(true);
+            }
         }
 
         Collections.reverse(orderResponseList);
@@ -190,5 +196,18 @@ public class OrderService implements IOrderService {
             orderResponse.getLaptopDTOS().add(laptopDTO);
         }
         return orderResponse;
+    }
+
+    private boolean isUpdateOrderStatus(OrderTest order) {
+        if (order.getOrderStatus() == OrderStatus.CANCELLED) {
+            return false;
+        }
+        if (order.getOrderStatus() == OrderStatus.DELIVERED) {
+            return false;
+        }
+        if (order.getOrderStatus() == OrderStatus.RETURNED) {
+            return false;
+        }
+        return true;
     }
 }
