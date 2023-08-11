@@ -149,24 +149,27 @@ public class OrderService implements IOrderService {
     public OrderResponse updateOrderStatus(String token, Long orderId, OrderStatus orderStatus) {
         Account account = getAccountFromToken(token);
         OrderResponse orderResponse = new OrderResponse();
-        for (OrderTest order : account.getOrderTests()) {
-            if (order.getId().equals(orderId)) {
-                if (order.getOrderStatus() == OrderStatus.CANCELLED) {
-                    throw new ServiceException("Đơn hàng đã huỷ,không thể cập nhật");
-                }
-                if (order.getOrderStatus() == OrderStatus.DELIVERED) {
-                    throw new ServiceException("Đơn hàng đã giao, không thể cập nhật");
-                }
-                if (order.getOrderStatus() == OrderStatus.RETURNED) {
-                    throw new ServiceException("Đơn hàng đã hoàn trả, không thể cập nhật");
-                }
-                order.setOrderStatus(orderStatus);
-                orderResponse = toOrderResponse(order);
-                orderResponse.setUpdated(true);
+        Optional<OrderTest> optional = orderRepository.findOrderTestById(orderId);
+        if(optional.isPresent()) {
+            OrderTest order = optional.get();
+            if (order.getOrderStatus() == OrderStatus.CANCELLED) {
+                throw new ServiceException("Đơn hàng đã huỷ,không thể cập nhật");
             }
+            if (order.getOrderStatus() == OrderStatus.DELIVERED) {
+                throw new ServiceException("Đơn hàng đã giao, không thể cập nhật");
+            }
+            if (order.getOrderStatus() == OrderStatus.RETURNED) {
+                throw new ServiceException("Đơn hàng đã hoàn trả, không thể cập nhật");
+            }
+            order.setOrderStatus(orderStatus);
+            orderResponse = toOrderResponse(order);
+            orderResponse.setUpdated(true);
+
+            accountRepository.save(account);
+            return orderResponse;
+        }else {
+            throw new ServiceException("Không tìm thấy đơn hàng với id: "+ orderId);
         }
-        accountRepository.save(account);
-        return orderResponse;
     }
 
     public Account getAccountFromToken(String token) {
